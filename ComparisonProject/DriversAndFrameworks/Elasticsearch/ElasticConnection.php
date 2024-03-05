@@ -1,6 +1,7 @@
 <?php
 
-namespace Comparison\Drivers\Elasticsearch;
+namespace Comparison\DriversAndFrameworks\Elasticsearch;
+
 class ElasticConnection
 {
 

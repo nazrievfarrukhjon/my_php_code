@@ -2,7 +2,7 @@
 
 namespace Comparison\DriversAndFrameworks\MsgBroker;
 
-class RabbitMqConnection
+class PsqlConnection
 {
 
 }

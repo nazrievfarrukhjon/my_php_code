@@ -1,6 +1,7 @@
 <?php
 
-namespace Members\Whitelisted\Whitelisted\Entities;
+namespace Comparison\MembersOfComparison\Whitelisted\Entities;
+
 class Whitelisted
 {
 
