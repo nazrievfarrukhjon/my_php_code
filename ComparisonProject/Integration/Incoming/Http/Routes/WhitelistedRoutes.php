@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Terrorists\Routes;
+namespace Routes;
 
 use Integration\Incoming\Http\Routes\Router;
 use JetBrains\PhpStorm\NoReturn;
