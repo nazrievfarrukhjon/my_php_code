@@ -1,6 +1,8 @@
 <?php
 
 use Integration\Incoming\Http\Routes\Router;
+use Routes\BlacklistedRoutes;
+use Routes\WhitelistedRoutes;
 
 $routesCacheFile = __DIR__ . '/routes_cache.php';
 

@@ -10,6 +10,11 @@ class Router
     private array $routeElements;
     private string $prefix = '/';
 
+    public static function new(): Router
+    {
+        return new self();
+    }
+
     protected function setPrefix(string $pref): void
     {
         $this->prefix = '/' . $pref;
@@ -66,13 +71,11 @@ class Router
         return $this;
     }
 
-    public static function handleHttpRequest(): void
+    public function handleHttpRequest(): void
     {
-        echo 'ss';
-        die();
         $requestedUri = self::getRequestedUri();
         $requestedHttpMethod = $_SERVER['REQUEST_METHOD'];
-        $routes = cachedRoutes();
+        $routes = $this->cachedRoutes();
         $uris = explode('/', $requestedUri);
         $uriFirst = isset($uris[1]) ? '/' . $uris[1] : '/';
         $uriSecond = isset($uris[2]) ? '/' . $uris[2] : '/';
@@ -122,4 +125,8 @@ class Router
         $this->routeElements['method'] = $method;
     }
 
+    function cachedRoutes(): string
+    {
+        return require __DIR__ . '/routes_cache.php';
+    }
 }
