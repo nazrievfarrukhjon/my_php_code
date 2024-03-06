@@ -1,8 +1,12 @@
 <?php
 
-namespace Comparison\UseCases;
+namespace App\Comparison\UseCases;
 
 class WhiteVsBlackComparatorUseCase
 {
 
+    public function findByName($body): array
+    {
+        return [];
+    }
 }

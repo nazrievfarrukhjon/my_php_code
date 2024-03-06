@@ -1,6 +1,6 @@
 <?php
 
-namespace Comparison\DriversAndFrameworks\DataBASES\Psql;
+namespace App\Comparison\DriversAndFrameworks\DataBASES\Psql;
 
 use Comparison\MembersOfComparison\Blacklisted\Entities\Blacklisted;
 use DateTime;

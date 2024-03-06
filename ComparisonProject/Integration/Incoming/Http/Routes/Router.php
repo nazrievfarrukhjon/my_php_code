@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Incoming\Http\Routes;
+namespace App\Integration\Incoming\Http\Routes;
 
 use Exception;
 
@@ -71,62 +71,53 @@ class Router
         return $this;
     }
 
-    public function handleHttpRequest(): void
-    {
-        $requestedUri = self::getRequestedUri();
-        $requestedHttpMethod = $_SERVER['REQUEST_METHOD'];
-        $routes = $this->cachedRoutes();
-        $uris = explode('/', $requestedUri);
-        $uriFirst = isset($uris[1]) ? '/' . $uris[1] : '/';
-        $uriSecond = isset($uris[2]) ? '/' . $uris[2] : '/';
-        if (isset($routes[$requestedHttpMethod][$uriFirst][$uriSecond])) {
-            $route = $routes[$requestedHttpMethod][$uriFirst][$uriSecond];
-            $controller = $route['controller'];
-            $method = $route['method'];
-
-            static::callControllerMethod($controller, $method);
-        } else {
-            http_response_code(404);
-            echo '404 Not Found';
-        }
-    }
-
-    static function callControllerMethod(string $controller, string $method): void
-    {
-        try {
-            $args = json_decode(file_get_contents('php://input'), true);
-            $controllerInstance = new $controller();
-
-            header('Content-Type: application/json');
-            if ($args === null) {
-                echo json_encode($controllerInstance->$method());
-            } elseif (count($args) > 0) {
-
-                echo json_encode($controllerInstance->$method($args));
-            }
-        } catch (Exception $e) {
-            $errorResponse = [
-                'error' => $e->getMessage(), $e->getCode(), $e->getTrace(),
-            ];
-            echo json_encode($errorResponse);
-        }
-    }
-
-    private static function getRequestedUri(): string
-    {
-        $uri = $_SERVER['REQUEST_URI'];
-        $uriParts = parse_url($uri);
-        return ($uriParts['path'] === '/') ? '/' : rtrim($uriParts['path'], '/');
-    }
-
     public function setControllerAndMethod(string $controller, string $method): void
     {
         $this->routeElements['controller'] = $controller;
         $this->routeElements['method'] = $method;
     }
 
-    function cachedRoutes(): string
+    function getRoutes(): array
     {
-        return require __DIR__ . '/routes_cache.php';
+        $routesCacheFile =  __DIR__ . '/routes_cache.php';
+
+        if (!file_exists($routesCacheFile) || filesize($routesCacheFile) < 2) {
+            $this->populateRoutes($routesCacheFile);
+        }
+        return require $routesCacheFile;
+    }
+
+    private function populateRoutes($routesCacheFile): void
+    {
+        $routesCacheFile = $this->routeCacheFile($routesCacheFile);
+
+        if (empty(Router::$routes)) {
+            $this->populate();
+        }
+        $routes = Router::$routes;
+
+        $routeContent = "<?php \n return " . var_export($routes, true) . ";";
+        file_put_contents($routesCacheFile, $routeContent);
+        echo("routes cached successfully.\n");
+    }
+
+    private function routeCacheFile($routesCache): string
+    {
+        if (!file_exists($routesCache)) {
+            file_put_contents($routesCache, '');
+        }
+        return $routesCache;
+    }
+
+    private function populate(): void
+    {
+        $routes = [
+            new HomeRoutes(),
+            new BlacklistedRoutes(),
+            new WhitelistedRoutes(),
+        ];
+        foreach ($routes as $route) {
+            $route();
+        }
     }
 }

@@ -1,16 +1,17 @@
 <?php
 
-namespace Comparison;
+namespace App\Integration\Incoming\Http\Routes;
 
-use Integration\Incoming\Http\Routes\Router;
-use JetBrains\PhpStorm\NoReturn;
+use App\Integration\Incoming\Http\Controllers\BlacklistedController;
 
 class BlacklistedRoutes extends Router
 {
-    #[NoReturn] public function __invoke(): void
+    public function __invoke(): void
     {
         $this->setPrefix('blacklisted');
         $this->post('/', BlacklistedController::class, 'save');
+        $this->get('/', BlacklistedController::class, 'getAll');
+
     }
 
 }

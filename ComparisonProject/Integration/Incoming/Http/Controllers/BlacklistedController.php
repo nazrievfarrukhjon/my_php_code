@@ -1,21 +1,22 @@
 <?php
 
-namespace Comparison\Integration\Http\Controllers;
+namespace App\Integration\Incoming\Http\Controllers;
 
-use Comparison\MembersOfComparison\Blacklisted\Entities\Blacklisted;
+use App\Comparison\UseCases\BlackVsWhiteComparatorUseCase;
+use App\MembersOfComparison\Blacklisted\Entities\Blacklisted;
 
 class BlacklistedController {
 
 
     public function find($body): void
     {
-        $bl = new BlacklistedUseCase();
-        echo $bl->findByName($body);
+        $bl = new BlackVsWhiteComparatorUseCase();
+        echo json_encode($bl->findByName($body));
     }
 
     public function getAll(): void
     {
-        echo 'About Page';
+        echo 'getAll Page';
     }
 
     public function getById(int $id): void

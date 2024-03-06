@@ -1,8 +1,10 @@
 <?php
 
-namespace Comparison\MembersOfComparison\Whitelisted\Entities;
+namespace App\MembersOfComparison\Whitelisted\Entities;
 
-class Whitelisted
+use App\Comparison\DriversAndFrameworks\DataBASES\Psql\ORM;
+
+class Whitelisted extends ORM
 {
 
 }
