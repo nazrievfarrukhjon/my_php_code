@@ -2,3 +2,4 @@
 /docker/pgdata
 /docker/es_data
 /docker/rabbitmq/persistence
+/vendor
