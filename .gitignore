@@ -3,3 +3,4 @@
 /docker/es_data
 /docker/rabbitmq/persistence
 /vendor
+/composer.lock
