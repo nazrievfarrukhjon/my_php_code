@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Comparison\DriversAndFrameworks\DataBASES\Psql;
+namespace App\DriversAndFrameworks\DataBASES\Psql;
 
-use Comparison\MembersOfComparison\Blacklisted\Entities\Blacklisted;
+use App\MembersOfComparison\Blacklisted\Entities\Blacklisted;
 use DateTime;
 use Exception;
 use InvalidArgumentException;

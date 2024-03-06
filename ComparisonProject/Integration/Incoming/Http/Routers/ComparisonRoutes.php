@@ -1,9 +1,9 @@
 <?php
 
-namespace Comparison\Integration\Incoming\Http\Routes;
+namespace Comparison\Integration\Incoming\Http\Routers;
 
-use Integration\Incoming\Http\Routes\Router;
-use Integration\Incoming\Http\Routes\WhitelistedController;
+use Integration\Incoming\Http\Routers\Router;
+use Integration\Incoming\Http\Routers\WhitelistedController;
 use JetBrains\PhpStorm\NoReturn;
 
 class ComparisonRoutes extends Router

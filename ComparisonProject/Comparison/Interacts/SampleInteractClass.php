@@ -1,6 +1,7 @@
 <?php
 
-namespace Comparison\Interacts;
+namespace App\Interacts;
+
 class SampleInteractClass
 {
 

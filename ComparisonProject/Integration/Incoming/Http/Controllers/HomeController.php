@@ -8,4 +8,14 @@ class HomeController
     {
         echo 'index Page';
     }
+
+    public function one(int $id): void
+    {
+        echo 'one Page';
+    }
+
+    public function two(int $firstId, int $secId): void
+    {
+        echo 'f: ' . $firstId . ' ' . 'sec: ' . $secId;
+    }
 }

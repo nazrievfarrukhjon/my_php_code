@@ -1,6 +1,6 @@
 <?php
 
-namespace Comparison\DriversAndFrameworks\MsgBroker;
+namespace App\DriversAndFrameworks\MsgBroker;
 
 class PsqlConnection
 {

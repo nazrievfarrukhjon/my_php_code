@@ -1,6 +1,6 @@
 <?php
 
-namespace Comparison\InterfaceAdapters\Databases\Pgsql;
+namespace App\InterfaceAdapters\Databases\Pgsql;
 
 use PDO;
 

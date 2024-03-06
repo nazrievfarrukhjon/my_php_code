@@ -2,7 +2,8 @@
 
 namespace App\Integration\Incoming\Http;
 
-use App\Integration\Incoming\Http\Routes\RoutePopulater;
+use App\Integration\Incoming\Http\Routers\RoutePopulator;
+use App\Integration\Incoming\Http\Routers\Router;
 use Exception;
 
 class IncomingHttpRequestHandler
@@ -18,22 +19,13 @@ class IncomingHttpRequestHandler
         $requestedUri = $this->getRequestedUri();
         $requestedHttpMethod = $_SERVER['REQUEST_METHOD'];
 
-        $routes = RoutePopulater::new()->getRoutes();
+        $routes = Router::new()
+            ->get($requestedHttpMethod, $requestedUri);
 
-        $uris = explode('/', $requestedUri);
-        $uriFirst = isset($uris[1]) ? '/' . $uris[1] : '/';
-        $uriSecond = isset($uris[2]) ? '/' . $uris[2] : '/';
+        $controller = $routes[0];
+        $method = $routes[1];
 
-        if (isset($routes[$requestedHttpMethod][$uriFirst][$uriSecond])) {
-            $route = $routes[$requestedHttpMethod][$uriFirst][$uriSecond];
-            $controller = $route['controller'];
-            $method = $route['method'];
-
-            $this->callControllerMethod($controller, $method);
-        } else {
-            http_response_code(404);
-            echo '404 Not Found';
-        }
+        $this->callControllerMethod($controller, $method, $requestedUri);
     }
 
     private function getRequestedUri(): string
@@ -43,18 +35,32 @@ class IncomingHttpRequestHandler
         return ($uriParts['path'] === '/') ? '/' : rtrim($uriParts['path'], '/');
     }
 
-    private function callControllerMethod(string $controller, string $method): void
+    private function callControllerMethod(string $controller, string $method, string $requestedUri): void
     {
         try {
             $args = json_decode(file_get_contents('php://input'), true);
             $controllerInstance = new $controller();
 
             header('Content-Type: application/json');
-            if ($args === null) {
-                echo json_encode($controllerInstance->$method());
-            } elseif (count($args) > 0) {
+            $uri = explode('/', $requestedUri);
 
-                echo json_encode($controllerInstance->$method($args));
+            if (!empty($uri[1])) {
+                $uriSize = count($uri);
+                if ($uriSize === 2) {
+                    echo json_encode($controllerInstance->$method($uri[1]));
+                } elseif ($uriSize === 3) {
+                    //dd($method, $controllerInstance);
+                    echo json_encode($controllerInstance->$method($uri[1], $uri[2]));
+                } elseif ($uriSize === 4) {
+                    echo json_encode($controllerInstance->$method($uri[1], $uri[2], $uri[3]));
+                }
+            } else {
+                //todo
+                if ($args === null) {
+                    echo json_encode($controllerInstance->$method());
+                } elseif (count($args) > 0) {
+                    echo json_encode($controllerInstance->$method($args));
+                }
             }
         } catch (Exception $e) {
             $errorResponse = [
