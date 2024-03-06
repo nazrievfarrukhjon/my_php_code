@@ -4,7 +4,7 @@ namespace App\Integration\Incoming\Http\Routes;
 
 use App\Integration\Incoming\Http\Controllers\HomeController;
 
-class HomeRoutes extends Router
+class HomeRoutes extends RouterBuilder
 {
     public function __invoke(): void
     {

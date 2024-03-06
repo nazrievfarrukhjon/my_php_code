@@ -7,7 +7,7 @@ namespace console;
 
 use Comparison\Integration\Incoming\Console\ConsoleCommandsHandler;
 
-require __DIR__ . '/../../../vendor/autoload.php';
+require __DIR__ . '/../../../../vendor/autoload.php';
 
 if ($argc < 2) {
     echo "please use signature: php my_php_file_script.php <message>\n";

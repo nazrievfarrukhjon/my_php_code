@@ -2,7 +2,7 @@
 
 namespace App\Integration\Incoming\Http;
 
-use App\Integration\Incoming\Http\Routes\Router;
+use App\Integration\Incoming\Http\Routes\RoutePopulater;
 use Exception;
 
 class IncomingHttpRequestHandler
@@ -18,7 +18,7 @@ class IncomingHttpRequestHandler
         $requestedUri = $this->getRequestedUri();
         $requestedHttpMethod = $_SERVER['REQUEST_METHOD'];
 
-        $routes = Router::new()->getRoutes();
+        $routes = RoutePopulater::new()->getRoutes();
 
         $uris = explode('/', $requestedUri);
         $uriFirst = isset($uris[1]) ? '/' . $uris[1] : '/';

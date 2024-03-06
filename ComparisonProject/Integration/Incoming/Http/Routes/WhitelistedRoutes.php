@@ -2,11 +2,11 @@
 
 namespace App\Integration\Incoming\Http\Routes;
 
-use App\Integration\Incoming\Http\Routes\Router;
+use App\Integration\Incoming\Http\Routes\RouterBuilder;
 //use App\Comparison\Integration\Incoming\Http\Controllers\WhitelistedController;
 use Comparison\Integration\Incoming\Http\Controllers\WhitelistedController;
 
-class WhitelistedRoutes extends Router
+class WhitelistedRoutes extends RouterBuilder
 {
     public function __invoke(): void
     {

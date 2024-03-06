@@ -4,13 +4,13 @@ namespace App\Integration\Incoming\Http\Routes;
 
 use Exception;
 
-class Router
+class RouterBuilder
 {
     static array $routes = [];
     private array $routeElements;
     private string $prefix = '/';
 
-    public static function new(): Router
+    public static function new(): RouterBuilder
     {
         return new self();
     }
@@ -77,47 +77,4 @@ class Router
         $this->routeElements['method'] = $method;
     }
 
-    function getRoutes(): array
-    {
-        $routesCacheFile =  __DIR__ . '/routes_cache.php';
-
-        if (!file_exists($routesCacheFile) || filesize($routesCacheFile) < 2) {
-            $this->populateRoutes($routesCacheFile);
-        }
-        return require $routesCacheFile;
-    }
-
-    private function populateRoutes($routesCacheFile): void
-    {
-        $routesCacheFile = $this->routeCacheFile($routesCacheFile);
-
-        if (empty(Router::$routes)) {
-            $this->populate();
-        }
-        $routes = Router::$routes;
-
-        $routeContent = "<?php \n return " . var_export($routes, true) . ";";
-        file_put_contents($routesCacheFile, $routeContent);
-        echo("routes cached successfully.\n");
-    }
-
-    private function routeCacheFile($routesCache): string
-    {
-        if (!file_exists($routesCache)) {
-            file_put_contents($routesCache, '');
-        }
-        return $routesCache;
-    }
-
-    private function populate(): void
-    {
-        $routes = [
-            new HomeRoutes(),
-            new BlacklistedRoutes(),
-            new WhitelistedRoutes(),
-        ];
-        foreach ($routes as $route) {
-            $route();
-        }
-    }
 }

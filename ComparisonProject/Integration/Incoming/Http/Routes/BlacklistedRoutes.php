@@ -4,7 +4,7 @@ namespace App\Integration\Incoming\Http\Routes;
 
 use App\Integration\Incoming\Http\Controllers\BlacklistedController;
 
-class BlacklistedRoutes extends Router
+class BlacklistedRoutes extends RouterBuilder
 {
     public function __invoke(): void
     {
