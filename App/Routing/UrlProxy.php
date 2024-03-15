@@ -1,10 +1,10 @@
 <?php
 
-namespace App\EntryPoint;
+namespace App\Routing;
 
 use Exception;
 
-readonly class RouteToEntity
+readonly class UrlProxy
 {
     public function __construct(
         private string $httpUri,
@@ -15,7 +15,7 @@ readonly class RouteToEntity
     /**
      * @throws Exception
      */
-    public function entity(): string
+    public function proxy(): string
     {
         if (isset($this->endpoints[$this->httMethod][$this->httpUri])) {
             return $this->endpoints[$this->httMethod][$this->httpUri][0];
@@ -27,7 +27,7 @@ readonly class RouteToEntity
     /**
      * @throws Exception
      */
-    public function entityMethod(): string
+    public function method(): string
     {
         if (isset($this->endpoints[$this->httMethod][$this->httpUri])) {
             return $this->endpoints[$this->httMethod][$this->httpUri][1];

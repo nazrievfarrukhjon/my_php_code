@@ -4,6 +4,7 @@ namespace App\EntryPoint;
 
 use App\Gun;
 use App\Routing\EndpointsRegistration;
+use App\Routing\UrlProxy;
 use Exception;
 
 readonly class HttpRequest
@@ -29,7 +30,7 @@ readonly class HttpRequest
             $this->content,
         );
         //////////////////////////////////// uri
-        $routeToEntity = new RouteToEntity(
+        $urlProxy = new UrlProxy(
             $this->httpUri,
             $this->httpMethod,
             $endpoints
@@ -39,11 +40,11 @@ readonly class HttpRequest
         $bodyParams = $requestParams->bodyParams();
         $uriParams = $requestParams->uriParams();
         //
-        $entity = $routeToEntity->entity();
-        $entityMethod = $routeToEntity->entityMethod();
-        $methodArguments = $routeToEntity->methodArguments();
+        $proxy = $urlProxy->proxy();
+        $method = $urlProxy->method();
+        //$methodArguments = $routeToEntity->methodArguments();
         //
-        $entity = new $entity($uriParams, $bodyParams, $entityMethod);
+        $entity = new $proxy($uriParams, $bodyParams, $method);
 
         echo $entity();
     }

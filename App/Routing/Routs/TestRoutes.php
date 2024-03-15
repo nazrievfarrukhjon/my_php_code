@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Routing\Endpoints;
+namespace App\Routing\Routs;
 
-use App\Entity\EntityA;
+use App\Proxy\ProxyA;
 
-class EndpointA extends EndpointSuperClass
+class TestRoutes extends AEndpointSuperClass
 {
 
     public function endpoints(): array
     {
-        $this->add('GET', '/a', EntityA::class, 'index', []);
-        $this->add('POST', '/a', EntityA::class, 'store', []);
-        $this->add('PUT', '/a', EntityA::class, 'update', ['int']);
-        $this->add('DELETE', '/a', EntityA::class, 'update', ['int']);
+        $this->add('GET', '/a', ProxyA::class, 'index', []);
+        $this->add('POST', '/a', ProxyA::class, 'store', []);
+        $this->add('PUT', '/a', ProxyA::class, 'update', ['int']);
+        $this->add('DELETE', '/a', ProxyA::class, 'update', ['int']);
 
         return $this->endpointsContainer;
     }

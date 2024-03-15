@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Routing\Endpoints;
+namespace App\Routing\Routs;
 
-abstract class EndpointSuperClass
+abstract class AEndpointSuperClass
 {
     protected array $endpointsContainer;
     public function __construct(array $endpointsContainer)

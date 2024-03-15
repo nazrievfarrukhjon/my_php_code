@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Entity;
+namespace App\Proxy;
 
-use App\Gun;
-
- class EntityA implements Entity
+ readonly class ProxyA implements IProxy
 {
     public function __construct(
-        private readonly array  $uriParams,
-        private readonly array  $bodyParams,
-        private readonly string $entityMethod,
+        private array  $uriParams,
+        private array  $bodyParams,
+        private string $entityMethod,
     ) {}
 
     public function __invoke()

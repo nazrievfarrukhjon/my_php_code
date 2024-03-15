@@ -2,16 +2,14 @@
 
 namespace App\Routing;
 
-use App\Routing\Endpoints\EndpointA;
-use App\Routing\Endpoints\EndpointB;
-use App\Routing\Endpoints\EndpointC;
+use App\Routing\Routs\TestRoutes;
+use App\Routing\Routs\BlacklistRoute;
 
 class EndpointsRegistration
 {
     private array $endpoints = [
-        EndpointA::class,
-        EndpointB::class,
-        EndpointC::class,
+        TestRoutes::class,
+        BlacklistRoute::class,
     ];
 
     public function endpoints(): array

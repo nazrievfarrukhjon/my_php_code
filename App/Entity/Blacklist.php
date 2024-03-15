@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-interface Entity
+class Blacklist
 {
 
 }
