@@ -2,8 +2,7 @@
 
 namespace App\EntryPoint;
 
-use App\Gun;
-use App\Routing\EndpointsRegistration;
+use App\Routing\RoutesRegistration;
 use App\Routing\UrlProxy;
 use Exception;
 
@@ -21,7 +20,7 @@ readonly class HttpRequest
      */
     public function handle(): void
     {
-        $endpoints = (new EndpointsRegistration())->endpoints();
+        $endpoints = (new RoutesRegistration())->endpoints();
 
         //////////////////////////////// params
         $requestParams = new HttpRequestParams(

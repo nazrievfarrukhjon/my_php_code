@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use App\Routing\EndpointsRegistration;
 use JetBrains\PhpStorm\NoReturn;
 
 #[NoReturn] function dd(...$args): void

@@ -2,6 +2,10 @@
 
 namespace App\Proxy;
 
+ use App\DB\DB;
+ use App\Entity\Blacklist;
+ use Exception;
+
  readonly class BlacklistProxy implements IProxy
 {
     public function __construct(
@@ -16,10 +20,15 @@ namespace App\Proxy;
 
     }
 
-    public function index(): string
+     /**
+      * @throws Exception
+      */
+     public function index(): array
     {
-        $this->uriParams;
-        return 'index';
+        $connection = (new DB())->connection();
+        $blacklist = new Blacklist($connection);
+
+        return $blacklist->all();
     }
 
     public function store(): string

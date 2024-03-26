@@ -5,7 +5,7 @@ namespace App\Routing;
 use App\Routing\Routs\TestRoutes;
 use App\Routing\Routs\BlacklistRoute;
 
-class EndpointsRegistration
+class RoutesRegistration
 {
     private array $endpoints = [
         TestRoutes::class,

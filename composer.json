@@ -11,5 +11,7 @@
             "email": "nazfar1988@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+      "ext-pdo": "*"
+    }
 }
