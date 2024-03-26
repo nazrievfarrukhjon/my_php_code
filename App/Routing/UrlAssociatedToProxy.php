@@ -4,7 +4,7 @@ namespace App\Routing;
 
 use Exception;
 
-readonly class UrlProxy
+readonly class UrlAssociatedToProxy
 {
     public function __construct(
         private string $httpUri,
@@ -17,11 +17,12 @@ readonly class UrlProxy
      */
     public function proxy(): string
     {
+        // get by http method ans uri the endpoint class which will handle request
         if (isset($this->endpoints[$this->httMethod][$this->httpUri])) {
             return $this->endpoints[$this->httMethod][$this->httpUri][0];
         }
 
-        throw new Exception('route not found class');
+        throw new Exception('endpoint not found class');
     }
 
     /**

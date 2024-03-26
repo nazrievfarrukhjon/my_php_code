@@ -3,7 +3,7 @@
 namespace App\EntryPoint;
 
 use App\Routing\RoutesRegistration;
-use App\Routing\UrlProxy;
+use App\Routing\UrlAssociatedToProxy;
 use Exception;
 
 readonly class HttpRequest
@@ -29,7 +29,7 @@ readonly class HttpRequest
             $this->content,
         );
         //////////////////////////////////// uri
-        $urlProxy = new UrlProxy(
+        $urlAssociatedToProxy = new UrlAssociatedToProxy(
             $this->httpUri,
             $this->httpMethod,
             $endpoints
@@ -39,12 +39,11 @@ readonly class HttpRequest
         $bodyParams = $requestParams->bodyParams();
         $uriParams = $requestParams->uriParams();
         //
-        $proxy = $urlProxy->proxy();
-        $method = $urlProxy->method();
-        //$methodArguments = $routeToEntity->methodArguments();
-        //
+        $proxy = $urlAssociatedToProxy->proxy();
+        $method = $urlAssociatedToProxy->method();
+
         $entity = new $proxy($uriParams, $bodyParams, $method);
 
-        echo $entity();
+        echo json_encode($entity());
     }
 }

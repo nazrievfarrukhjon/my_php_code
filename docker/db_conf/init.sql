@@ -1,1 +1,1 @@
-create database test_db;
+create database my_php_code_db;
