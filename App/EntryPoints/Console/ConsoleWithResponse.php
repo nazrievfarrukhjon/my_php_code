@@ -1,6 +1,8 @@
 <?php
 
-namespace App\EntryPoint\Console;
+namespace App\EntryPoints\Console;
+
+use App\EntryPoints\Console\Console;
 
 readonly class ConsoleWithResponse
 {
