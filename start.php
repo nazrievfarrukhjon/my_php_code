@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use App\EntryPoint\Console\Console;
-use App\EntryPoint\Console\ConsoleWithResponse;
+use App\EntryPoints\Console\Console;
+use App\EntryPoints\Console\ConsoleWithResponse;
 use JetBrains\PhpStorm\NoReturn;
 
 #[NoReturn] function dd(...$args): void
@@ -35,7 +35,7 @@ try {
         }
     }
     //http
-    (new \App\EntryPoint\HttpRequest(
+    (new \App\EntryPoint\Http\HttpRequest(
         $_SERVER['REQUEST_URI'],
         $_SERVER['REQUEST_METHOD'],
         $_SERVER["CONTENT_TYPE"] ?? 'application/json',

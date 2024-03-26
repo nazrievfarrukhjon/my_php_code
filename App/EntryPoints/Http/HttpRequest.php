@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EntryPoint;
+namespace App\EntryPoints\Http;
 
 use App\Routing\RoutesRegistration;
 use App\Routing\UrlAssociatedToProxy;
