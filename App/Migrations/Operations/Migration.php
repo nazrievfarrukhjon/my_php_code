@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Migrations;
+namespace App\Migrations\Operations;
 
 interface Migration
 {

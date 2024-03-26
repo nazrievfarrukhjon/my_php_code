@@ -1,6 +1,8 @@
 <?php
 
 namespace App\EntryPoint\Console;
+use App\Migrations\Operations\MigrationFilesSqlQuery;
+
 class Console
 {
     public function __construct(
@@ -15,35 +17,14 @@ class Console
     public function handleCliCommand(): void
     {
         if ($this->commandName === 'migrate' && $this->argOne === 'absent') {
-
+            (new MigrationFilesSqlQuery())->query('migrate');
+        } elseif ($this->commandName === 'migration' && $this->argOne === 'rollback') {
+            (new MigrationFilesSqlQuery())->query('rollback');
         }
-
-        $directory = __DIR__ . '/../../Migrations';
-        $fileNames = scandir($directory);
-        $fileNames = array_diff($fileNames, ['.', '..']);
-
-        foreach ($fileNames as $file) {
-            if ($this->startsWithNumeric($file)) {
-
-                require_once $directory . '/' . $file;
-                $className = basename($file, '.php');
-                $exploded = explode('_', $className);
-                $className = 'App\Migrations' . '\\' . $exploded[1];
-                $migration = new $className;
-                $migration->migrate();
-            }
-        }
-
     }
 
-    public function response()
+    public function response(): string
     {
-        return;
+        return 'done';
     }
-
-    private function startsWithNumeric($str): bool
-    {
-        return preg_match('/^\d/', $str) === 1;
-    }
-
 }

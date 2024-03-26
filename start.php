@@ -22,10 +22,13 @@ try {
             $commandName = $argv[1];
             $argOne = $argv[2] ?? 'absent';
             $argTwo = $argv[3] ?? 'absent';
-            $console = new Console($commandName, $argOne, $argTwo);
-            $console->handleCliCommand();
 
-            echo (new ConsoleWithResponse($console))->response();
+            $response = (new ConsoleWithResponse(
+                    new Console($commandName, $argOne, $argTwo))
+                )->response();
+
+            echo "$response\n";
+
             die(1);
         } else {
             dd('no args passed to cli command');

@@ -11,7 +11,10 @@ readonly class ConsoleWithResponse
 
     public function response(): string
     {
+        $this->console->handleCliCommand();
+
         $result = $this->console->response();
+
         return json_encode($result);
     }
 }

@@ -7,7 +7,7 @@ use App\Migrations\Operations\Migration;
 use Exception;
 use PDO;
 
-class Blacklists implements Migration
+class Users implements Migration
 {
 
     /**
@@ -21,15 +21,12 @@ class Blacklists implements Migration
         $query = "
             DO $$ 
             BEGIN
-                IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'blacklists') THEN
-                    CREATE TABLE blacklists (
+                IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users') THEN
+                    CREATE TABLE users (
                         id BIGSERIAL PRIMARY KEY,
-                        first_name VARCHAR(255),
-                        second_name VARCHAR(255),
-                        third_name VARCHAR(255),
-                        fourth_name VARCHAR(255),
-                        type VARCHAR(20),
-                        birth_date DATE
+                        name VARCHAR(255),
+                        email VARCHAR(255),
+                        password VARCHAR(255)
                     );
                 END IF;
             END $$;
@@ -49,8 +46,8 @@ class Blacklists implements Migration
         $query = "
             DO $$ 
             BEGIN
-                IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'blacklists') THEN
-                    DROP TABLE IF EXISTS blacklists;
+                IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users') THEN
+                    DROP TABLE IF EXISTS users;
                 END IF;
             END $$;
         ";
