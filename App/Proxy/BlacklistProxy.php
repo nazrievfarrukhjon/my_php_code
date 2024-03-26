@@ -2,7 +2,7 @@
 
 namespace App\Proxy;
 
- use App\DB\DB;
+ use App\DB\MyDB;
  use App\Entity\Blacklist;
  use Exception;
 
@@ -25,7 +25,8 @@ namespace App\Proxy;
       */
      public function index(): array
     {
-        $connection = (new DB())->connection();
+        $connection = (new MyDB())->connection();
+
         $blacklist = new Blacklist($connection);
 
         return $blacklist->all();

@@ -2,7 +2,7 @@
 
 namespace App\Proxy;
 
- use App\DB\DB;
+ use App\DB\MyDB;
  use App\Entity\Blacklist;
  use Exception;
 

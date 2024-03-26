@@ -3,9 +3,6 @@
 namespace App\Entity;
 
 use App\DB\Connection;
-use App\DB\DB;
-use App\DB\MyDB;
-use App\DB\Postgresql;
 use PDO;
 use PDOException;
 

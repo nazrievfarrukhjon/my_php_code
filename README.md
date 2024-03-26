@@ -1,3 +1,6 @@
+- run console commands example 
+* make cli args="arg1 arg2"
+
 # Introduction to InitialsComparisonProject
 
 - Welcome to the InitialsComparisonProject, a versatile and efficient solution designed to manage and compare white-listed and black-listed persons' initials across various sources. In today's digital age, the need for robust tools to handle such data comparisons is paramount, and InitialsComparisonProject rises to the challenge.

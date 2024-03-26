@@ -4,7 +4,7 @@ namespace App\DB;
 
 use Exception;
 
-class DB implements Connection
+class MyDB implements Connection
 {
     private string $dbType = 'pgsql';
 
@@ -21,10 +21,10 @@ class DB implements Connection
 
     public function postgresql(): Postgresql
     {
-        $host = 'localhost';
-        $dbname = 'comparison_db';
-        $username = 'postgresql';
-        $password = 'postgresql';
+        $host = 'postgresql_my_php_code'; //localhost
+        $dbname = 'my_php_code_db';
+        $username = 'postgres';
+        $password = 'postgres';
 
         return new Postgresql(
             "pgsql:host=$host;dbname=$dbname",
