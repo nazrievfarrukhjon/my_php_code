@@ -1,14 +1,14 @@
 <?php
 
-namespace App\EntryPoint\Console;
+namespace App\EntryPoints\Console;
 use App\Migrations\Operations\MigrationFilesSqlQuery;
 
 class Console
 {
     public function __construct(
-        private string $commandName,
-        private string $argOne,
-        private string $argTwo
+        private readonly string $commandName,
+        private readonly string $argOne,
+        private string          $argTwo
     )
     {
     }
