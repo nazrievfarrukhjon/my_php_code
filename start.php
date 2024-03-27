@@ -35,11 +35,12 @@ try {
         }
     }
     //http
-    (new \App\EntryPoint\Http\HttpRequest(
+    (new \App\EntryPoints\Http\HttpRequest(
         $_SERVER['REQUEST_URI'],
         $_SERVER['REQUEST_METHOD'],
         $_SERVER["CONTENT_TYPE"] ?? 'application/json',
         file_get_contents('php://input'),
+        $_POST
     ))->handle();
 } catch (Exception $e) {
     echo $e->getMessage();

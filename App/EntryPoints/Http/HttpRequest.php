@@ -13,6 +13,7 @@ readonly class HttpRequest
         private string $httpMethod,
         private string $contentType,
         private string $content,
+        private array $postParams,
     ) {}
 
     /**
@@ -27,6 +28,7 @@ readonly class HttpRequest
             $this->httpUri,
             $this->contentType,
             $this->content,
+            $this->postParams,
         );
         //////////////////////////////////// uri
         $urlAssociatedToProxy = new UrlAssociatedToProxy(

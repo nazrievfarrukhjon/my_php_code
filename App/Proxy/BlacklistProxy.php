@@ -32,10 +32,13 @@ namespace App\Proxy;
         return $blacklist->all();
     }
 
-    public function store(): string
+     /**
+      * @throws Exception
+      */
+     public function store()
     {
-        return 'store';
-
+        $connection = (new MyDB())->connection();
+        (new Blacklist($connection))->store($this->bodyParams);
     }
 
     public function update(): string

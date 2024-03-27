@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\DB\Connection;
+use App\Validations\BlacklistStoreValidation;
+use Exception;
 use PDO;
 use PDOException;
 
@@ -26,9 +28,11 @@ readonly class Blacklist
         }
     }
 
-    public function store(array $params): array
+    public function store(array $params): void
     {
         try {
+            (new BlacklistStoreValidation($params))->check();
+
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Construct the INSERT query
@@ -41,9 +45,9 @@ readonly class Blacklist
             $statement->execute([$params['first_name'], $params['second_name'], $params['third_name'], $params['fourth_name'], $params['type'], $params['birth_date']]);
 
             // Return success message or any other appropriate response
-            return ["Success: Record inserted successfully"];
-        } catch (PDOException $e) {
-            return ["Error: " . $e->getMessage()];
+            echo "Success: Record inserted successfully";
+        } catch (PDOException|Exception $e) {
+            echo json_encode(["Error: " . $e->getMessage()]);
         }
     }
 

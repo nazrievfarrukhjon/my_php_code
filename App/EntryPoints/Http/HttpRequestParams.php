@@ -9,7 +9,8 @@ readonly class HttpRequestParams
     public function __construct(
         private string $httpUri,
         private string $contentType,
-        private string $content
+        private string $content,
+        private array $postParams,
     ) {}
 
     /**
