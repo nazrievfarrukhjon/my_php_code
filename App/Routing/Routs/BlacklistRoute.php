@@ -12,7 +12,7 @@ class BlacklistRoute extends AEndpointSuperClass
         $this->add('GET', '/blacklist', BlacklistProxy::class, 'index', []);
         $this->add('POST', '/blacklist', BlacklistProxy::class, 'store', []);
         $this->add('PUT', '/blacklist', BlacklistProxy::class, 'update', ['int']);
-        $this->add('DELETE', '/blacklist', BlacklistProxy::class, 'update', ['int']);
+        $this->add('DELETE', '/blacklist', BlacklistProxy::class, 'delete', ['int']);
 
         return $this->endpointsContainer;
     }
