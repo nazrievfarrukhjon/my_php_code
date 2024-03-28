@@ -40,18 +40,6 @@ readonly class HttpRequestParams
         }
     }
 
-
-    public function uriEmbeddedParam(): int
-    {
-        $allowedMethods = ['DELETE', 'PUT', 'PATCH'];
-
-        if (in_array($_SERVER['REQUEST_METHOD'], $allowedMethods)) {
-            $uris = explode('/', $this->httpUri);
-            return end($uris);
-        }
-        return -1;
-    }
-
     private function explodeBodies(): array
     {
         $bodyParams = [];

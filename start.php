@@ -34,9 +34,13 @@ try {
             dd('no args passed to cli command');
         }
     }
+
     //http
     (new \App\EntryPoints\Http\HttpRequest(
-        $_SERVER['REQUEST_URI'],
+        new \App\EntryPoints\Http\HttpUri(
+            $_SERVER['REQUEST_URI'],
+            $_SERVER['REQUEST_METHOD']
+        ),
         $_SERVER['REQUEST_METHOD'],
         $_SERVER["CONTENT_TYPE"] ?? 'application/json',
         ['file_get_contents' => file_get_contents('php://input'), 'post' => $_POST, 'files' => $_FILES]
