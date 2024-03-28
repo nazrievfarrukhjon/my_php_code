@@ -30,7 +30,7 @@ readonly class HttpUri
                 return substr($uri, 0, $lastSlashPos);
             }
         }
-        return -1;
+        return $uri;
     }
 
 }
