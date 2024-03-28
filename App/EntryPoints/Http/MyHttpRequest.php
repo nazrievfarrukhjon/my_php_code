@@ -6,7 +6,7 @@ use App\Routing\RoutesRegistration;
 use App\Routing\UrlAssociatedToProxy;
 use Exception;
 
-readonly class HttpRequest
+readonly class MyHttpRequest
 {
     public function __construct(
         private HttpUri $httpUri,

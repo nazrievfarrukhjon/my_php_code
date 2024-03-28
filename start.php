@@ -4,6 +4,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use App\EntryPoints\Console\Console;
 use App\EntryPoints\Console\ConsoleWithResponse;
+use App\EntryPoints\Http\HttpUri;
+use App\EntryPoints\Http\MyHttpRequest;
 use JetBrains\PhpStorm\NoReturn;
 
 #[NoReturn] function dd(...$args): void
@@ -36,8 +38,8 @@ try {
     }
 
     //http
-    (new \App\EntryPoints\Http\HttpRequest(
-        new \App\EntryPoints\Http\HttpUri(
+    (new MyHttpRequest(
+        new HttpUri(
             $_SERVER['REQUEST_URI'],
             $_SERVER['REQUEST_METHOD']
         ),
