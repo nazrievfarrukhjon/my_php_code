@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Validations;
+
 use DateTime;
 use Exception;
 
-readonly class BlacklistStoreValidation
+readonly class WhitelistStoreValidation
 {
     public function __construct(private array $params)
     {
@@ -45,8 +46,6 @@ readonly class BlacklistStoreValidation
 
     /**
      * Check if a date string is in the format YYYY-MM-DD
-     * @param string $dateString
-     * @return bool
      */
     private function isValidDateFormat(string $dateString): bool
     {

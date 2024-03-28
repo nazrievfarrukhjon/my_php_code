@@ -3,10 +3,10 @@
 namespace App\Proxy;
 
  use App\DB\MyDB;
- use App\Entity\Blacklist;
+ use App\Entity\Whitelist;
  use Exception;
 
- readonly class BlacklistProxy implements IProxy
+ readonly class WhitelistProxy implements IProxy
 {
     public function __construct(
         private array  $uriParams,
@@ -26,9 +26,9 @@ namespace App\Proxy;
       */
      public function index(): array
     {
-        $blacklist = new Blacklist(new MyDB());
+        $whitelist = new Whitelist(new MyDB());
 
-        return $blacklist->all();
+        return $whitelist->all();
     }
 
      /**
@@ -36,7 +36,7 @@ namespace App\Proxy;
       */
      public function store(): string
      {
-        (new Blacklist(new MyDB()))->store($this->bodyParams);
+        (new Whitelist(new MyDB()))->store($this->bodyParams);
 
         return 'stored!';
     }
@@ -46,7 +46,7 @@ namespace App\Proxy;
       */
      public function update(): string
     {
-        (new Blacklist(new MyDB()))->update($this->uriEmbeddedParam, $this->bodyParams);
+        (new Whitelist(new MyDB()))->update($this->uriEmbeddedParam, $this->bodyParams);
 
         return 'updated!';
     }
@@ -56,7 +56,7 @@ namespace App\Proxy;
       */
      public function delete(): string
     {
-        (new Blacklist(new MyDB()))->delete($this->uriEmbeddedParam);
+        (new Whitelist(new MyDB()))->delete($this->uriEmbeddedParam);
 
         return 'deleted';
     }
