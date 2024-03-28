@@ -2,17 +2,17 @@
 
 namespace App\Routing\Routs;
 
-use App\Proxy\BlacklistProxy;
+use App\Proxy\WhitelistProxy;
 
-class BlacklistRoute extends AEndpointSuperClass
+class WhitelistRoute extends AEndpointSuperClass
 {
 
     public function endpoints(): array
     {
-        $this->add('GET', '/blacklist', BlacklistProxy::class, 'index', []);
-        $this->add('POST', '/blacklist', BlacklistProxy::class, 'store', []);
-        $this->add('PUT', '/blacklist', BlacklistProxy::class, 'update', ['int']);
-        $this->add('DELETE', '/blacklist', BlacklistProxy::class, 'delete', ['int']);
+        $this->add('GET', '/whitelist', WhitelistProxy::class, 'index', []);
+        $this->add('POST', '/whitelist', WhitelistProxy::class, 'store', []);
+        $this->add('PUT', '/whitelist', WhitelistProxy::class, 'update', ['int']);
+        $this->add('DELETE', '/whitelist', WhitelistProxy::class, 'delete', ['int']);
 
         return $this->endpointsContainer;
     }

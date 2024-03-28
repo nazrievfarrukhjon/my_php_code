@@ -4,12 +4,12 @@ namespace App\Entity;
 
 use App\DB\Connection;
 use App\DB\MyDB;
-use App\Validations\BlacklistStoreValidation;
+use App\Validations\WhiteliststoreValidation;
 use Exception;
 use PDO;
 use PDOException;
 
-readonly class Blacklist
+readonly class Whitelist
 {
 
     private Connection $connection;
@@ -26,7 +26,7 @@ readonly class Blacklist
     {
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $query = "SELECT * FROM blacklists";
+            $query = "SELECT * FROM whitelists";
             $statement = $this->connection->prepare($query);
             $statement->execute();
 
@@ -39,12 +39,12 @@ readonly class Blacklist
     public function store(array $params): void
     {
         try {
-            (new BlacklistStoreValidation($params))->check();
+            (new WhitelistStoreValidation($params))->check();
 
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Construct the INSERT query
-            $query = "INSERT INTO blacklists (first_name, second_name, third_name, fourth_name, type, birth_date) VALUES (?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO whitelists (first_name, second_name, third_name, fourth_name, type, birth_date) VALUES (?, ?, ?, ?, ?, ?)";
 
             // Prepare the statement
             $statement = $this->connection->prepare($query);
@@ -65,7 +65,7 @@ readonly class Blacklist
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Construct the DELETE query
-            $query = "DELETE FROM blacklists WHERE id = ?";
+            $query = "DELETE FROM whitelists WHERE id = ?";
 
             // Prepare the statement
             $statement = $this->connection->prepare($query);
@@ -86,7 +86,7 @@ readonly class Blacklist
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Construct the UPDATE query
-            $query = "UPDATE blacklists SET first_name = ?, second_name = ?, third_name = ?, fourth_name = ?, type = ?, birth_date = ? WHERE id = ?";
+            $query = "UPDATE whitelists SET first_name = ?, second_name = ?, third_name = ?, fourth_name = ?, type = ?, birth_date = ? WHERE id = ?";
 
             // Prepare the statement
             $statement = $this->connection->prepare($query);
