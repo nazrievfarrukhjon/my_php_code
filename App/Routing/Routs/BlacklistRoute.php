@@ -23,8 +23,7 @@ class BlacklistRoute extends AEndpointSuperClass
         string $entity,
         string $entityMethod,
         array  $argsRules
-    ): void
-    {
+    ): void {
         $this->endpointsContainer[$httpMethod][$uri] = [$entity, $entityMethod, $argsRules];
     }
 

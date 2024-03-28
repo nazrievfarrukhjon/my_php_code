@@ -2,17 +2,17 @@
 
 namespace App\Proxy;
 
- use App\DB\MyDB;
- use App\Entity\Blacklist;
- use Exception;
+use Exception;
 
- readonly class WelcomeProxy implements IProxy
+readonly class WelcomeProxy implements IProxy
 {
     public function __construct(
         private array  $uriParams,
         private array  $bodyParams,
         private string $entityMethod,
-    ) {}
+    )
+    {
+    }
 
     public function __invoke()
     {
@@ -20,11 +20,11 @@ namespace App\Proxy;
 
     }
 
-     /**
-      * @throws Exception
-      */
-     public function index(): array
-     {
+    /**
+     * @throws Exception
+     */
+    public function index(): array
+    {
         return ['this is welcome page'];
     }
 

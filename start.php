@@ -39,8 +39,7 @@ try {
         $_SERVER['REQUEST_URI'],
         $_SERVER['REQUEST_METHOD'],
         $_SERVER["CONTENT_TYPE"] ?? 'application/json',
-        file_get_contents('php://input'),
-        $_POST
+        ['file_get_contents' => file_get_contents('php://input'), 'post' => $_POST, 'files' => $_FILES]
     ))->handle();
 } catch (Exception $e) {
     echo $e->getMessage();

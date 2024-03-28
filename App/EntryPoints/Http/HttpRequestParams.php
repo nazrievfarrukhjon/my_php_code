@@ -9,8 +9,7 @@ readonly class HttpRequestParams
     public function __construct(
         private string $httpUri,
         private string $contentType,
-        private string $content,
-        private array $postParams,
+        private array $bodyContents,
     ) {}
 
     /**
@@ -18,17 +17,21 @@ readonly class HttpRequestParams
      */
     public function bodyParams(): array
     {
-        $body = $this->content;
-
         if ($this->contentType === "application/json") {
-            if ($body) {
-                return json_decode($body, true);
+            if ($this->bodyContents['file_get_contents']) {
+                return json_decode($this->bodyContents['file_get_contents'], true);
             }
 
             return [];
+        } elseif ($this->contentType === "multipart/form-data") {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+                return $this->explodeBodies();
+            }
+            throw new Exception('multipart/form-data with get method not allowed');
+
         } elseif ($this->contentType === "application/x-www-form-urlencoded") {
             $result = [];
-            parse_str($body, $result);
+            parse_str($this->bodyContents['file_get_contents'], $result);
             return $result;
         } elseif ($this->contentType === '') {
             return [];
@@ -37,6 +40,41 @@ readonly class HttpRequestParams
         }
     }
 
+
+    public function uriEmbeddedParam(): int
+    {
+        $allowedMethods = ['DELETE', 'PUT', 'PATCH'];
+
+        if (in_array($_SERVER['REQUEST_METHOD'], $allowedMethods)) {
+            $uris = explode('/', $this->httpUri);
+            return end($uris);
+        }
+        return -1;
+    }
+
+    private function explodeBodies(): array
+    {
+        $bodyParams = [];
+
+        foreach ($this->bodyContents['post'] as $key => $value) {
+            $bodyParams[$key] = $value;
+        }
+
+        foreach ($this->bodyContents['files'] as $key => $file) {
+            $bodyParams[$key] = $file;
+        }
+
+        if (isset($this->bodyContents['file_get_contents'])) {
+            $file_get_contents = json_decode($this->bodyContents['file_get_contents'], true);
+            foreach ($file_get_contents as $key => $file) {
+                $bodyParams[$key] = $file;
+            }
+        }
+
+        return $bodyParams;
+    }
+
+    // uri divided by ?
     public function uriParams(): array
     {
         if (str_contains($this->httpUri, '?')) {

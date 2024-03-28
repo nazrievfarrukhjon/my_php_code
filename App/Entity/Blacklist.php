@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\DB\Connection;
+use App\DB\MyDB;
 use App\Validations\BlacklistStoreValidation;
 use Exception;
 use PDO;
@@ -10,8 +11,15 @@ use PDOException;
 
 readonly class Blacklist
 {
-    public function __construct(private Connection $connection)
+
+    private Connection $connection;
+
+    /**
+     * @throws Exception
+     */
+    public function __construct(MyDB $myDb)
     {
+        $this->connection = $myDb->connection();
     }
 
     public function all(): array
@@ -23,7 +31,7 @@ readonly class Blacklist
             $statement->execute();
 
             return $statement->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
             return ["Connection failed: " . $e->getMessage()];
         }
     }
@@ -67,7 +75,7 @@ readonly class Blacklist
 
             // Return success message or any other appropriate response
             return ["Success: Record deleted successfully"];
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
             return ["Error: " . $e->getMessage()];
         }
     }
@@ -88,7 +96,7 @@ readonly class Blacklist
 
             // Return success message or any other appropriate response
             return ["Success: Record updated successfully"];
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
             return ["Error: " . $e->getMessage()];
         }
     }

@@ -12,8 +12,7 @@ readonly class HttpRequest
         private string $httpUri,
         private string $httpMethod,
         private string $contentType,
-        private string $content,
-        private array $postParams,
+        private array $bodyContents,
     ) {}
 
     /**
@@ -21,30 +20,39 @@ readonly class HttpRequest
      */
     public function handle(): void
     {
+        //
         $endpoints = (new RoutesRegistration())->endpoints();
 
-        //////////////////////////////// params
+        //
         $requestParams = new HttpRequestParams(
             $this->httpUri,
             $this->contentType,
-            $this->content,
-            $this->postParams,
+            $this->bodyContents,
         );
-        //////////////////////////////////// uri
+        $bodyParams = $requestParams->bodyParams();
+        $uriEmbeddedParam = $requestParams->uriEmbeddedParam();
+
+        //
+        $uri = $this->httpUri;
+        if (in_array($this->httpMethod, ['DELETE', 'PUT', 'PATCH'])) {
+            $lastSlashPos = strrpos($uri, '/');
+            if ($lastSlashPos !== false) {
+                $uri = substr($uri, 0, $lastSlashPos);
+            }
+        }
+
         $urlAssociatedToProxy = new UrlAssociatedToProxy(
-            $this->httpUri,
+            $uri,
             $this->httpMethod,
             $endpoints
         );
 
-        //
-        $bodyParams = $requestParams->bodyParams();
         $uriParams = $requestParams->uriParams();
-        //
+
         $proxy = $urlAssociatedToProxy->proxy();
         $method = $urlAssociatedToProxy->method();
 
-        $entity = new $proxy($uriParams, $bodyParams, $method);
+        $entity = new $proxy($uriParams, $bodyParams, $method, $uriEmbeddedParam);
 
         echo json_encode($entity());
     }

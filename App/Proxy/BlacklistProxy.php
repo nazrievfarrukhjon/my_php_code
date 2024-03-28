@@ -12,6 +12,7 @@ namespace App\Proxy;
         private array  $uriParams,
         private array  $bodyParams,
         private string $entityMethod,
+        private int $uriEmbeddedParam,
     ) {}
 
     public function __invoke()
@@ -25,9 +26,7 @@ namespace App\Proxy;
       */
      public function index(): array
     {
-        $connection = (new MyDB())->connection();
-
-        $blacklist = new Blacklist($connection);
+        $blacklist = new Blacklist(new MyDB());
 
         return $blacklist->all();
     }
@@ -35,21 +34,30 @@ namespace App\Proxy;
      /**
       * @throws Exception
       */
-     public function store()
-    {
-        $connection = (new MyDB())->connection();
-        (new Blacklist($connection))->store($this->bodyParams);
+     public function store(): string
+     {
+        (new Blacklist(new MyDB()))->store($this->bodyParams);
+
+        return 'stored!';
     }
 
-    public function update(): string
+     /**
+      * @throws Exception
+      */
+     public function update(): string
     {
-        return 'update';
+        (new Blacklist(new MyDB()))->update($this->uriEmbeddedParam, $this->bodyParams);
 
+        return 'updated!';
     }
 
-    public function delete(): string
+     /**
+      * @throws Exception
+      */
+     public function delete(): string
     {
-        return 'delete';
+        (new Blacklist(new MyDB()))->delete($this->uriEmbeddedParam);
 
+        return 'deleted';
     }
 }
