@@ -4,3 +4,4 @@
 /docker/rabbitmq/persistence
 /vendor
 /composer.lock
+/conf/*

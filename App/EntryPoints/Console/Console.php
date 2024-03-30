@@ -1,8 +1,10 @@
 <?php
 
 namespace App\EntryPoints\Console;
+use App\Cache\Cache;
 use App\Migrations\Operations\MigrationFilesSqlQuery;
 
+// make cli args="arg1 arg2"
 class Console
 {
     public function __construct(
@@ -20,6 +22,10 @@ class Console
             (new MigrationFilesSqlQuery())->query('migrate');
         } elseif ($this->commandName === 'migration' && $this->argOne === 'rollback') {
             (new MigrationFilesSqlQuery())->query('rollback');
+        } elseif ($this->commandName === 'cache' && $this->argOne === 'clean') {
+            (new Cache())->cleanEndpoints();
+        }else {
+            dd('no command match!');
         }
     }
 
