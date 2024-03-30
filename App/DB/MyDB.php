@@ -13,7 +13,7 @@ class MyDB implements Connection
      */
     public function connection(): Connection
     {
-        if ($this->dbType === 'pgsql') {
+        if (env('DB_TYPE') === 'postgresql') {
             return $this->postgresql();
         }
         throw new Exception('no other db allowed');
@@ -21,10 +21,10 @@ class MyDB implements Connection
 
     public function postgresql(): Postgresql
     {
-        $host = 'postgresql_my_php_code'; //localhost
-        $dbname = 'my_php_code_db';
-        $username = 'postgres';
-        $password = 'postgres';
+        $host = env('DB_HOST');
+        $dbname = env('DB_NAME');
+        $username = env('DB_USER');
+        $password = env('DB_PASS');
 
         return new Postgresql(
             "pgsql:host=$host;dbname=$dbname",

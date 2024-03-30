@@ -16,6 +16,34 @@ use JetBrains\PhpStorm\NoReturn;
     die(1);
 }
 
+//todo optimize it
+function env(string $envVarKey) {
+    $filePath = __DIR__ . '.env';
+    $envVariables = [];
+
+    if ($file = fopen($filePath, 'r')) {
+        while (($line = fgets($file)) !== false) {
+            $line = trim($line);
+            if (empty($line) || strpos($line, '#') === 0) {
+                continue;
+            }
+
+            list($key, $value) = explode('=', $line, 2);
+
+            $value = trim($value, '"');
+
+            $envVariables[$key] = $value;
+        }
+
+        fclose($file);
+    } else {
+        // Handle error if unable to open the file
+        die("Unable to open $filePath for reading.");
+    }
+
+    return $envVariables[$envVarKey];
+}
+
 try {
     // cli
     // #[ExpectedValues(['cli', 'phpdbg', 'embed', 'apache', 'apache2handler', 'cgi-fcgi', 'cli-server', 'fpm-fcgi', 'litespeed'])]
