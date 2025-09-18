@@ -5,3 +5,5 @@
 /vendor
 /composer.lock
 /conf/*
+/docker/pgdata_primary
+/docker/pgdata_replica

@@ -18,7 +18,7 @@ use JetBrains\PhpStorm\NoReturn;
 
 //todo optimize it
 function env(string $envVarKey) {
-    $filePath = __DIR__ . '.env';
+    $filePath = __DIR__ . '/.env';
     $envVariables = [];
 
     if ($file = fopen($filePath, 'r')) {

@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 1
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'php1_fpm'
+    static_configs:
+      - targets: ['php1_exporter:9253']
+
+  - job_name: 'php2_fpm'
+    static_configs:
+      - targets: ['php2_exporter:9254']
