@@ -12,3 +12,5 @@ cli:
 	docker-compose run --rm php1 php start.php $(args)
 
 ### make cli args="arg1 arg2"
+
+# make cli file executable chmod +x ./entrypoint/cli

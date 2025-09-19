@@ -1,3 +1,3 @@
 <?php
 
-require __DIR__ . '/../start.php';
+require __DIR__ . '/../entrypoint/web.php';
