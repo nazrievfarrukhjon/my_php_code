@@ -5,9 +5,10 @@ namespace App\EntryPoints\Http;
 use App\DB\MyDB;
 use App\Log\LoggerInterface;
 use App\Routing\RoutesRegistration;
-use App\Routing\UrlAssociatedToProxy;
+use App\Routing\UrlAssociatedToController;
 use Exception;
 
+//todo split into Router vs Dispatcher.
 readonly class MyHttpRequest
 {
     public function __construct(
@@ -38,17 +39,17 @@ readonly class MyHttpRequest
         $uriParams = $requestParams->uriParams();
 
         // Map URL to proxy class + method
-        $urlAssociatedToProxy = new UrlAssociatedToProxy(
+        $urlAssociatedToController = new UrlAssociatedToController(
             $this->httpUri->cleanedUri(),
             $this->httpMethod,
             $endpoints
         );
 
-        $proxyClass = $urlAssociatedToProxy->proxy();
-        $method = $urlAssociatedToProxy->method();
+        $controllerClass = $urlAssociatedToController->getController();
+        $method = $urlAssociatedToController->method();
 
         // Inject dependencies into proxy (MyDB, Env, Logger, etc.)
-        $proxy = new $proxyClass(
+        $proxy = new $controllerClass(
             $uriParams,
             $bodyParams,
             $method,

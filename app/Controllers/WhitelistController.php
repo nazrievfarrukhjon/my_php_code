@@ -1,20 +1,30 @@
 <?php
 
-namespace App\Proxy;
+namespace App\Controllers;
 
  use App\DB\MyDB;
  use App\Entity\Whitelist;
  use Exception;
 
- readonly class WhitelistProxy implements IProxy
+ readonly class WhitelistController implements ControllerInterface
  {
+     private string $entityMethod;
+     private MyDB $myDb;
+     private int $uriEmbeddedParam;
+     private array $bodyParams;
+
      public function __construct(
-         private array $uriParams,
-         private array $bodyParams,
-         private string $entityMethod,
-         private int $uriEmbeddedParam,
-         private MyDB $myDb
-     ) {}
+         array $uriParams,
+          array $bodyParams,
+          string $entityMethod,
+          int $uriEmbeddedParam,
+          MyDB $myDb
+     ) {
+            $this->entityMethod = $entityMethod;
+            $this->myDb = $myDb;
+            $this->uriEmbeddedParam = $uriEmbeddedParam;
+            $this->bodyParams = $bodyParams;
+     }
 
      public function __invoke()
      {

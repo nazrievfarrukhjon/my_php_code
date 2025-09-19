@@ -2,6 +2,7 @@
 
 namespace App\Cache;
 
+//implement psr-16 cache interface
 class Cache
 {
 

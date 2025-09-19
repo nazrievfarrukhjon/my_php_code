@@ -4,7 +4,7 @@ namespace App\Routing;
 
 use Exception;
 
-readonly class UrlAssociatedToProxy
+readonly class UrlAssociatedToController
 {
     public function __construct(
         private string $httpUri,
@@ -15,7 +15,7 @@ readonly class UrlAssociatedToProxy
     /**
      * @throws Exception
      */
-    public function proxy(): string
+    public function getController(): string
     {
         if (isset($this->endpoints[$this->httpMethod][$this->httpUri])) {
             return $this->endpoints[$this->httpMethod][$this->httpUri][0];
