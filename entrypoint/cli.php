@@ -19,5 +19,5 @@ $cliFactory = fn($argv) => new ConsoleWithResponse(
     )
 );
 
-$app = new App($env, $logger, cliFactory: $cliFactory, httpRequestFactory: null);
+$app = new App($env, $logger, cliFactory: $cliFactory, httpRequestCallback: null);
 exit($app->handleCli($argv));

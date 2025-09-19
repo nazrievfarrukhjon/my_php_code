@@ -7,7 +7,7 @@ use App\Entity\Whitelist;
 use App\EntryPoints\Console\Console;
 use App\EntryPoints\Console\ConsoleWithResponse;
 use App\EntryPoints\Http\HttpUri;
-use App\EntryPoints\Http\MyHttpRequest;
+use App\EntryPoints\Http\WebRequest;
 use App\Env\Env;
 use App\Log\Logger;
 use JetBrains\PhpStorm\NoReturn;
@@ -47,7 +47,7 @@ $container->setFactory('app', function($c) {
     return new App(
         $c->get('env'),
         $c->get('logger'),
-        fn($uri, $method, $contentType, $data) => new MyHttpRequest(
+        fn($uri, $method, $contentType, $data) => new WebRequest(
             new HttpUri($uri, $method),
             $method,
             $contentType,

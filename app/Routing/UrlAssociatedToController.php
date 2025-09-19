@@ -27,7 +27,7 @@ readonly class UrlAssociatedToController
     /**
      * @throws Exception
      */
-    public function method(): string
+    public function getMethod(): string
     {
         if (isset($this->endpoints[$this->httpMethod][$this->httpUri])) {
             return $this->endpoints[$this->httpMethod][$this->httpUri][1];

@@ -21,7 +21,7 @@ readonly class HttpUri
         return -1;
     }
 
-    public function cleanedUri(): string
+    public function cleanUri(): string
     {
         $uri = $this->httpUri;
         if (in_array($this->httpMethod, ['DELETE', 'PUT', 'PATCH'])) {

@@ -4,18 +4,21 @@ namespace App\EntryPoints\Http;
 
 use Exception;
 
-readonly class HttpRequestParams
+readonly class RequestParser
 {
     public function __construct(
         private string $httpUri,
         private string $contentType,
-        private array $bodyContents,
-    ) {}
+        private array  $bodyContents,
+        private string $httpMethod,
+    )
+    {
+    }
 
     /**
      * @throws Exception
      */
-    public function bodyParams(): array
+    private function parseBodyParams(): array
     {
         if ($this->contentType === "application/json") {
             if ($this->bodyContents['file_get_contents']) {
@@ -24,7 +27,7 @@ readonly class HttpRequestParams
 
             return [];
         } elseif ($this->contentType === "multipart/form-data") {
-            if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            if ($this->httpMethod !== 'GET') {
                 return $this->explodeBodies();
             }
             throw new Exception('multipart/form-data with get method not allowed');
@@ -63,7 +66,7 @@ readonly class HttpRequestParams
     }
 
     // uri divided by ?
-    public function uriParams(): array
+    private function parseUriParams(): array
     {
         if (str_contains($this->httpUri, '?')) {
             $explodedUri = explode('?', $this->httpUri);
@@ -79,6 +82,19 @@ readonly class HttpRequestParams
         }
 
         return [];
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function parse(): array
+    {
+        return [
+            'body' => $this->parseBodyParams(),
+            'uri' => $this->parseUriParams(),
+        ];
+
+
     }
 
 

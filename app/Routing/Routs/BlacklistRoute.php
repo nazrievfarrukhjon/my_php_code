@@ -6,7 +6,6 @@ use App\Controllers\BlacklistController;
 
 class BlacklistRoute extends AEndpointSuperClass
 {
-
     public function endpoints(): array
     {
         $this->add('GET', '/blacklist', BlacklistController::class, 'index', []);

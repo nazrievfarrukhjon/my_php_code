@@ -7,3 +7,4 @@
 /conf/*
 /docker/pgdata_primary
 /docker/pgdata_replica
+logs

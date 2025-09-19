@@ -3,9 +3,9 @@
 namespace App\HTTP;
 
 
-use App\EntryPoints\Http\MyHttpRequest;
+use App\EntryPoints\Http\HttpRequest;
 
 interface Middleware {
-    public function process(MyHttpRequest $request, callable $next): mixed;
+    public function process(HttpRequest $request, callable $next): mixed;
 }
 

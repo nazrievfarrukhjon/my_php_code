@@ -4,49 +4,70 @@ namespace App\Log;
 
 class Logger implements LoggerInterface
 {
-
-    public function emergency($message, array $context = array())
+    public function emergency($message, array $context = []): void
     {
-        // TODO: Implement emergency() method.
+        $this->log(LogLevel::EMERGENCY, $message, $context);
     }
 
-    public function alert($message, array $context = array())
+    public function alert($message, array $context = []): void
     {
-        // TODO: Implement alert() method.
+        $this->log(LogLevel::ALERT, $message, $context);
     }
 
-    public function critical($message, array $context = array())
+    public function critical($message, array $context = []): void
     {
-        // TODO: Implement critical() method.
+        $this->log(LogLevel::CRITICAL, $message, $context);
     }
 
-    public function error($message, array $context = array())
+    public function error($message, array $context = []): void
     {
-        // TODO: Implement error() method.
+        $this->log(LogLevel::ERROR, $message, $context);
     }
 
-    public function warning($message, array $context = array())
+    public function warning($message, array $context = []): void
     {
-        // TODO: Implement warning() method.
+        $this->log(LogLevel::WARNING, $message, $context);
     }
 
-    public function notice($message, array $context = array())
+    public function notice($message, array $context = []): void
     {
-        // TODO: Implement notice() method.
+        $this->log(LogLevel::NOTICE, $message, $context);
     }
 
-    public function info($message, array $context = array())
+    public function info($message, array $context = []): void
     {
-        // TODO: Implement info() method.
+        $this->log(LogLevel::INFO, $message, $context);
     }
 
-    public function debug($message, array $context = array())
+    public function debug($message, array $context = []): void
     {
-        // TODO: Implement debug() method.
+        $this->log(LogLevel::DEBUG, $message, $context);
     }
 
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = []): void
     {
-        // TODO: Implement log() method.
+        // Replace placeholders in the message with context values
+        $message = $this->interpolate($message, $context);
+
+        // Format log line
+        $time = date('Y-m-d H:i:s');
+        $formatted = "[{$time}] {$level}: {$message} " . json_encode($context) . "\n";
+
+        // Send to PHP's error log
+        error_log($formatted, 3, __DIR__ . '/../../logs/app.log');
+
+    }
+
+    private function interpolate(string $message, array $context): string
+    {
+        // Interpolates context values into message placeholders
+        $replace = [];
+        foreach ($context as $key => $val) {
+            // Check that the value can be cast to string
+            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
+                $replace['{' . $key . '}'] = $val;
+            }
+        }
+        return strtr($message, $replace);
     }
 }
