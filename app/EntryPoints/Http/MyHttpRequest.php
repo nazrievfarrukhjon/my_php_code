@@ -2,6 +2,8 @@
 
 namespace App\EntryPoints\Http;
 
+use App\DB\MyDB;
+use App\Log\LoggerInterface;
 use App\Routing\RoutesRegistration;
 use App\Routing\UrlAssociatedToProxy;
 use Exception;
@@ -13,6 +15,8 @@ readonly class MyHttpRequest
         private string $httpMethod,
         private string $contentType,
         private array $bodyContents,
+        private MyDB $myDb,
+        private LoggerInterface $logger
     ) {}
 
     /**
@@ -20,35 +24,46 @@ readonly class MyHttpRequest
      */
     public function handle(): void
     {
-        //
+        // Register routes
         $endpoints = (new RoutesRegistration())->endpoints();
 
-        //
+        // Parse request params
         $requestParams = new HttpRequestParams(
             $this->httpUri->cleanedUri(),
             $this->contentType,
             $this->bodyContents,
         );
+
         $bodyParams = $requestParams->bodyParams();
-        //
+        $uriParams = $requestParams->uriParams();
+
+        // Map URL to proxy class + method
         $urlAssociatedToProxy = new UrlAssociatedToProxy(
             $this->httpUri->cleanedUri(),
             $this->httpMethod,
             $endpoints
         );
 
-        $uriParams = $requestParams->uriParams();
-
-        $proxy = $urlAssociatedToProxy->proxy();
+        $proxyClass = $urlAssociatedToProxy->proxy();
         $method = $urlAssociatedToProxy->method();
 
-        $entity = new $proxy(
+        // Inject dependencies into proxy (MyDB, Env, Logger, etc.)
+        $proxy = new $proxyClass(
             $uriParams,
             $bodyParams,
             $method,
-            $this->httpUri->uriEmbeddedParam()
+            $this->httpUri->uriEmbeddedParam(),
+            $this->myDb,      // injected
+            $this->logger     // injected
         );
 
-        echo json_encode($entity());
+        try {
+            $response = $proxy(); // execute proxy method
+            echo json_encode($response);
+        } catch (Exception $e) {
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
     }
 }

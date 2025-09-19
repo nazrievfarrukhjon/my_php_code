@@ -2,18 +2,23 @@
 
 namespace App\DB;
 
+use App\Env\Env;
 use Exception;
 
 class MyDB implements Connection
 {
     private string $dbType = 'pgsql';
 
+    public function __construct(private readonly Env $env)
+    {
+    }
+
     /**
      * @throws Exception
      */
     public function connection(): Connection
     {
-        if (env('DB_TYPE') === 'postgresql') {
+        if ($this->env->get('DB_TYPE') === 'postgresql') {
             return $this->postgresql();
         }
         throw new Exception('no other db allowed');
@@ -21,10 +26,10 @@ class MyDB implements Connection
 
     public function postgresql(): Postgresql
     {
-        $host = env('DB_HOST');
-        $dbname = env('DB_NAME');
-        $username = env('DB_USER');
-        $password = env('DB_PASS');
+        $host = $this->env->get('DB_HOST');
+        $dbname = $this->env->get('DB_NAME');
+        $username = $this->env->get('DB_USER');
+        $password = $this->env->get('DB_PASS');
 
         return new Postgresql(
             "pgsql:host=$host;dbname=$dbname",

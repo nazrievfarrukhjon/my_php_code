@@ -7,57 +7,56 @@ namespace App\Proxy;
  use Exception;
 
  readonly class WhitelistProxy implements IProxy
-{
-    public function __construct(
-        private array  $uriParams,
-        private array  $bodyParams,
-        private string $entityMethod,
-        private int $uriEmbeddedParam,
-    ) {}
+ {
+     public function __construct(
+         private array $uriParams,
+         private array $bodyParams,
+         private string $entityMethod,
+         private int $uriEmbeddedParam,
+         private MyDB $myDb
+     ) {}
 
-    public function __invoke()
-    {
-        return call_user_func([$this, $this->entityMethod]);
-
-    }
+     public function __invoke()
+     {
+         return call_user_func([$this, $this->entityMethod]);
+     }
 
      /**
       * @throws Exception
       */
      public function index(): array
-    {
-        $whitelist = new Whitelist(new MyDB());
-
-        return $whitelist->all();
-    }
+     {
+         $whitelist = new Whitelist($this->myDb);
+         return $whitelist->all();
+     }
 
      /**
       * @throws Exception
       */
      public function store(): string
      {
-        (new Whitelist(new MyDB()))->store($this->bodyParams);
-
-        return 'stored!';
-    }
+         $whitelist = new Whitelist($this->myDb);
+         $whitelist->store($this->bodyParams);
+         return 'stored!';
+     }
 
      /**
       * @throws Exception
       */
      public function update(): string
-    {
-        (new Whitelist(new MyDB()))->update($this->uriEmbeddedParam, $this->bodyParams);
-
-        return 'updated!';
-    }
+     {
+         $whitelist = new Whitelist($this->myDb);
+         $whitelist->update($this->uriEmbeddedParam, $this->bodyParams);
+         return 'updated!';
+     }
 
      /**
       * @throws Exception
       */
      public function delete(): string
-    {
-        (new Whitelist(new MyDB()))->delete($this->uriEmbeddedParam);
-
-        return 'deleted';
-    }
-}
+     {
+         $whitelist = new Whitelist($this->myDb);
+         $whitelist->delete($this->uriEmbeddedParam);
+         return 'deleted';
+     }
+ }
