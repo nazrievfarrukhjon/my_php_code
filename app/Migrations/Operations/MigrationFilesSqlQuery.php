@@ -1,32 +1,49 @@
 <?php
-
 namespace App\Migrations\Operations;
-class MigrationFilesSqlQuery
+
+use App\DB\DatabaseConnectionInterface;
+use Exception;
+
+readonly class MigrationFilesSqlQuery
 {
+    public function __construct(
+        private DatabaseConnectionInterface $db
+    ) {}
+
+    /**
+     * Run all migration files
+     * @param string $method "migrate" or "rollback"
+     * @throws Exception
+     */
     public function query(string $method): void
     {
         $directory = __DIR__ . '/../../Migrations';
         $fileNames = scandir($directory);
 
-        $fileNames = array_filter($fileNames, function ($fileName) {
-            return preg_match('/^\d+_/',$fileName) === 1;
-        });
+        // filter only files like "123_Blacklists.php"
+        $fileNames = array_filter($fileNames, fn($fileName) =>
+            preg_match('/^\d+_/', $fileName) === 1
+        );
 
         foreach ($fileNames as $file) {
-            if ($this->startsWithNumeric($file)) {
+            require_once $directory . '/' . $file;
 
-                require_once $directory . '/' . $file;
-                $className = basename($file, '.php');
-                $exploded = explode('_', $className);
-                $className = 'App\Migrations' . '\\' . $exploded[1];
-                $migration = new $className;
-                $migration->$method();
+            $className = basename($file, '.php');
+            $exploded = explode('_', $className);
+
+            // full namespaced class
+            $className = 'App\\Migrations\\' . $exploded[1];
+
+            if (!class_exists($className)) {
+                throw new Exception("Migration class $className not found in $file");
             }
-        }
-    }
 
-    private function startsWithNumeric($str): bool
-    {
-        return preg_match('/^\d/', $str) === 1;
+            $migration = new $className($this->db);
+            if (!method_exists($migration, $method)) {
+                throw new Exception("Migration class $className missing method $method");
+            }
+
+            $migration->$method();
+        }
     }
 }

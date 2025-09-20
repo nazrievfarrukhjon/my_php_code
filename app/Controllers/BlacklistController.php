@@ -2,14 +2,14 @@
 
 namespace App\Controllers;
 
- use App\DB\MyDB;
+ use App\DB\Postgres;
  use App\Entity\Blacklist;
  use Exception;
 
  readonly class BlacklistController implements ControllerInterface
 {
      private string $entityMethod;
-     private MyDB $myDb;
+     private Postgres $myDb;
      private int $uriEmbeddedParam;
      private array $bodyParams;
 
@@ -18,10 +18,10 @@ namespace App\Controllers;
          array $bodyParams,
          string $entityMethod,
          int $uriEmbeddedParam,
-         MyDB $myDb
+         Postgres $db
      ) {
          $this->entityMethod = $entityMethod;
-         $this->myDb = $myDb;
+         $this->myDb = $db;
          $this->uriEmbeddedParam = $uriEmbeddedParam;
          $this->bodyParams = $bodyParams;
      }

@@ -2,28 +2,28 @@
 
 namespace App\Controllers;
 
- use App\DB\MyDB;
+ use App\DB\DatabaseInterface;
  use App\Entity\Whitelist;
  use Exception;
 
  readonly class WhitelistController implements ControllerInterface
  {
      private string $entityMethod;
-     private MyDB $myDb;
+     private DatabaseInterface $db;
      private int $uriEmbeddedParam;
      private array $bodyParams;
 
      public function __construct(
-         array $uriParams,
-          array $bodyParams,
-          string $entityMethod,
-          int $uriEmbeddedParam,
-          MyDB $myDb
+         array                      $uriParams,
+         array                      $bodyParams,
+         string                     $entityMethod,
+         int                        $uriEmbeddedParam,
+         DatabaseInterface $db,
      ) {
             $this->entityMethod = $entityMethod;
-            $this->myDb = $myDb;
             $this->uriEmbeddedParam = $uriEmbeddedParam;
             $this->bodyParams = $bodyParams;
+            $this->db = $db;
      }
 
      public function __invoke()
@@ -36,7 +36,7 @@ namespace App\Controllers;
       */
      public function index(): array
      {
-         $whitelist = new Whitelist($this->myDb);
+         $whitelist = new Whitelist($this->db);
          return $whitelist->all();
      }
 
@@ -45,7 +45,7 @@ namespace App\Controllers;
       */
      public function store(): string
      {
-         $whitelist = new Whitelist($this->myDb);
+         $whitelist = new Whitelist($this->db);
          $whitelist->store($this->bodyParams);
          return 'stored!';
      }
@@ -55,7 +55,7 @@ namespace App\Controllers;
       */
      public function update(): string
      {
-         $whitelist = new Whitelist($this->myDb);
+         $whitelist = new Whitelist($this->db);
          $whitelist->update($this->uriEmbeddedParam, $this->bodyParams);
          return 'updated!';
      }
@@ -65,7 +65,7 @@ namespace App\Controllers;
       */
      public function delete(): string
      {
-         $whitelist = new Whitelist($this->myDb);
+         $whitelist = new Whitelist($this->db);
          $whitelist->delete($this->uriEmbeddedParam);
          return 'deleted';
      }

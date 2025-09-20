@@ -2,55 +2,60 @@
 
 namespace App\Migrations;
 
-use App\DB\MyDB;
+use App\DB\DatabaseConnectionInterface;
 use App\Migrations\Operations\Migration;
 use Exception;
 use PDO;
 
 class Users implements Migration
 {
+    public function __construct(
+        private DatabaseConnectionInterface $db
+    ) {}
 
     /**
      * @throws Exception
      */
     public function migrate(): void
     {
-        $connection = (new MyDB())->connection();
+        $connection = $this->db->connection();
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $query = "
-            DO $$ 
-            BEGIN
-                IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users') THEN
-                    CREATE TABLE users (
-                        id BIGSERIAL PRIMARY KEY,
-                        name VARCHAR(255),
-                        email VARCHAR(255),
-                        password VARCHAR(255)
-                    );
-                END IF;
-            END $$;
-        ";
+        // Polymorphic SQL depending on DB type
+        if ($this->db instanceof \App\DB\Postgres) {
+            $sql = "
+                CREATE TABLE IF NOT EXISTS users (
+                    id BIGSERIAL PRIMARY KEY,
+                    name VARCHAR(255),
+                    email VARCHAR(255),
+                    password VARCHAR(255)
+                );
+            ";
+        } elseif ($this->db instanceof \App\DB\Sqlite) {
+            $sql = "
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    email TEXT,
+                    password TEXT
+                );
+            ";
+        } else {
+            throw new Exception("Unsupported DB type");
+        }
 
-        $connection->exec($query);
+        $connection->exec($sql);
     }
-
 
     /**
      * @throws Exception
      */
     public function rollback(): void
     {
-        $connection = (new MyDB())->connection();
+        $connection = $this->db->connection();
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $query = "
-            DO $$ 
-            BEGIN
-                IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users') THEN
-                    DROP TABLE IF EXISTS users;
-                END IF;
-            END $$;
-        ";
-        $connection->exec($query);
+
+        $sql = "DROP TABLE IF EXISTS users;";
+        $connection->exec($sql);
     }
 }

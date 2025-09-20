@@ -20,8 +20,6 @@ readonly class App
      */
     function handleHttp(): void
     {
-        $this->logger->info('qwe', ['qwe' => 'qwe']);
-
         $method = strtoupper(trim($_SERVER['REQUEST_METHOD'] ?? 'GET'));
         $allowed = ['application/json', 'multipart/form-data', 'application/x-www-form-urlencoded'];
         $contentType = $_SERVER['CONTENT_TYPE'] ?? 'application/json';
@@ -41,7 +39,6 @@ readonly class App
             ]
         );
 
-        $this->logger->info('qwe', ['qwe' => 'qwe']);
         $httpRequest->handle();
     }
 

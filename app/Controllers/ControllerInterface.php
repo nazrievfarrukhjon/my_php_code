@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\DB\MyDB;
+use App\DB\Postgres;
 
 interface ControllerInterface
 {
@@ -11,7 +11,7 @@ interface ControllerInterface
         array $bodyParams,
         string $entityMethod,
         int $uriEmbeddedParam,
-        MyDB $myDb
+        Postgres $db
     );
 
     public function __invoke();

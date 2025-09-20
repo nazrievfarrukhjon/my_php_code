@@ -2,14 +2,13 @@
 
 namespace App\EntryPoints\Http;
 
-use App\DB\MyDB;
+use App\DB\Postgres;
 use App\Dispatcher;
 use App\Log\LoggerInterface;
 use App\Routing\Router;
 use App\Routing\RoutesRegistration;
 use Exception;
 
-//todo split into Router vs Dispatcher.
 readonly class WebRequest
 {
     public function __construct(
@@ -17,7 +16,7 @@ readonly class WebRequest
         private string          $httpMethod,
         private string          $contentType,
         private array           $bodyContents,
-        private MyDB            $myDb,
+        private Postgres        $myDb,
         private LoggerInterface $logger
     )
     {

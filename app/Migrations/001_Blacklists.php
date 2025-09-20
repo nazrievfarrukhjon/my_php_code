@@ -2,58 +2,61 @@
 
 namespace App\Migrations;
 
-use App\DB\MyDB;
+use App\DB\DatabaseConnectionInterface;
+use App\DB\Postgres;
+use App\DB\Sqlite;
 use App\Migrations\Operations\Migration;
-use Exception;
 use PDO;
 
-class Blacklists implements Migration
+readonly class Blacklists implements Migration
 {
+    public function __construct(
+        private DatabaseConnectionInterface $db
+    ) {}
 
-    /**
-     * @throws Exception
-     */
     public function migrate(): void
     {
-        $connection = (new MyDB())->connection();
-        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn = $this->db->connection();
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $query = "
-            DO $$ 
-            BEGIN
-                IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'blacklists') THEN
-                    CREATE TABLE blacklists (
-                        id BIGSERIAL PRIMARY KEY,
-                        first_name VARCHAR(255),
-                        second_name VARCHAR(255),
-                        third_name VARCHAR(255),
-                        fourth_name VARCHAR(255),
-                        type VARCHAR(20),
-                        birth_date DATE
-                    );
-                END IF;
-            END $$;
-        ";
+        if ($this->db instanceof Postgres) {
+            $sql = "
+                CREATE TABLE IF NOT EXISTS blacklists (
+                    id BIGSERIAL PRIMARY KEY,
+                    first_name VARCHAR(255),
+                    second_name VARCHAR(255),
+                    third_name VARCHAR(255),
+                    fourth_name VARCHAR(255),
+                    type VARCHAR(20),
+                    birth_date DATE
+                );
+            ";
+        } elseif ($this->db instanceof Sqlite) {
+            $sql = '
+                CREATE TABLE IF NOT EXISTS blacklists (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    first_name TEXT,
+                    second_name TEXT,
+                    third_name TEXT,
+                    fourth_name TEXT,
+                    type TEXT,
+                    birth_date TEXT
+                );
+            ';
+        } else {
+            throw new \Exception("Unsupported DB type");
+        }
 
-        $connection->exec($query);
+        $conn->exec($sql);
     }
 
-
-    /**
-     * @throws Exception
-     */
     public function rollback(): void
     {
-        $connection = (new MyDB())->connection();
-        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $query = "
-            DO $$ 
-            BEGIN
-                IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'blacklists') THEN
-                    DROP TABLE IF EXISTS blacklists;
-                END IF;
-            END $$;
-        ";
-        $connection->exec($query);
+        $conn = $this->db->connection();
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = "DROP TABLE IF EXISTS blacklists;";
+        $conn->exec($sql);
     }
+
 }

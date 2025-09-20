@@ -9,7 +9,7 @@ down:
 	docker-compose down
 args ?=
 cli:
-	docker-compose run --rm php1 php start.php $(args)
+	docker-compose run --rm php1 php ./entrypoint/cli.php $(args)
 
 ### make cli args="arg1 arg2"
 

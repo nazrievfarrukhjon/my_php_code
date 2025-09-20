@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\DB\Connection;
-use App\DB\MyDB;
+use App\DB\Postgres;
 use App\Validations\WhiteliststoreValidation;
 use Exception;
 use PDO;
@@ -17,7 +17,7 @@ readonly class Whitelist
     /**
      * @throws Exception
      */
-    public function __construct(private MyDB $myDb)
+    public function __construct(private Postgres $myDb)
     {
         $this->connection = $this->myDb->connection();
     }

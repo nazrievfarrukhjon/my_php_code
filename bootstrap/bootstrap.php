@@ -2,7 +2,8 @@
 
 use App\App;
 use App\Container\Container;
-use App\DB\MyDB;
+use App\DB\Postgres;
+use App\DB\Sqlite;
 use App\Entity\Whitelist;
 use App\EntryPoints\Console\Console;
 use App\EntryPoints\Console\ConsoleWithResponse;
@@ -35,12 +36,22 @@ $container->setFactory('logger', function() {
 });
 
 
-$container->setFactory('my_db', function($c) {
-    return new MyDB($c->get('env'));
+$container->setFactory('db', function($c) {
+    $env = $c->get('env');
+    $connection = $env->get('DB_CONNECTION');
+
+    $c->get('logger')->info("Using DB_CONNECTION: {$connection}");
+
+    return match ($connection) {
+        'pgsql' => new Postgres($env),
+        'sqlite' => new Sqlite($env),
+        default => throw new \RuntimeException("Unsupported DB_CONNECTION: {$connection}"),
+    };
 });
 
+
 $container->setFactory('whitelist', function($c) {
-    return new Whitelist($c->get('my_db'));
+    return new Whitelist($c->get('db'));
 });
 
 $container->setFactory('app', function($c) {
@@ -52,7 +63,7 @@ $container->setFactory('app', function($c) {
             $method,
             $contentType,
             $data,
-            $c->get('my_db'),
+            $c->get('db'),
             $c->get('logger')
         ),
         fn($argv) => new ConsoleWithResponse(
