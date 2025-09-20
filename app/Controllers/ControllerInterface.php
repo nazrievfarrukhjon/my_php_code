@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\DB\Database;
+use App\DB\DBConnection;
 
 interface ControllerInterface
 {
@@ -11,7 +11,7 @@ interface ControllerInterface
         array $bodyParams,
         string $entityMethod,
         int $uriEmbeddedParam,
-        Database $db
+        DBConnection $db
     );
 
     public function __invoke();

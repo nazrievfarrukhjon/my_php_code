@@ -3,8 +3,12 @@ namespace App\DB;
 
 use PDO;
 
-readonly class PostgresDatabase implements Database {
-    public function __construct(private string $dsn, private string $user, private string $pass) {}
+readonly class PostgresDatabase implements DBConnection {
+    public function __construct(
+        private string $dsn,
+        private string $user,
+        private string $pass
+    ) {}
 
     public function connection(): PDO {
         return new PDO($this->dsn, $this->user, $this->pass);

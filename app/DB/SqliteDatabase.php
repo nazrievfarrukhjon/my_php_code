@@ -4,7 +4,7 @@ namespace App\DB;
 
 use PDO;
 
-class SqliteDatabase implements Database {
+readonly class SqliteDatabase implements DBConnection {
     public function __construct(private string $path) {}
 
     public function connection(): PDO {

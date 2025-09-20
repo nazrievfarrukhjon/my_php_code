@@ -6,7 +6,6 @@ use App\Controllers\BlacklistController;
 use App\Controllers\WelcomeController;
 use App\Controllers\WhitelistController;
 use App\DB\DatabaseFactory;
-use App\DB\PostgresDatabase;
 use App\EntryPoints\Console\Console;
 use App\EntryPoints\Console\ConsoleWithResponse;
 use App\EntryPoints\Http\HttpUri;
@@ -44,7 +43,7 @@ $container->setFactory('db', function($c) {
     $c->get('logger')->info("Using DB_CONNECTION: {$connection}");
 
     $databaseFactory = new DatabaseFactory();
-    return $databaseFactory->create($env);
+    return $databaseFactory->createConnection($env);
 });
 
 

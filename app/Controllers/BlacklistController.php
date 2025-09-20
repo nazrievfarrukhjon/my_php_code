@@ -2,14 +2,14 @@
 
 namespace App\Controllers;
 
- use App\DB\Database;
+ use App\DB\DBConnection;
  use App\Repositories\BlacklistRepository;
  use Exception;
 
  readonly class BlacklistController implements ControllerInterface
 {
      private string $entityMethod;
-     private Database $db;
+     private DBConnection $db;
      private int $uriEmbeddedParam;
      private array $bodyParams;
 

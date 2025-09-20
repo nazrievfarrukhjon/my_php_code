@@ -2,7 +2,7 @@
 
 namespace App\Migrations;
 
-use App\DB\Database;
+use App\DB\DBConnection;
 use App\DB\PostgresDatabase;
 use App\DB\SqliteDatabase;
 use App\Migrations\Operations\Migration;
@@ -12,7 +12,7 @@ use PDO;
 class Users implements Migration
 {
     public function __construct(
-        private Database $db
+        private DBConnection $db
     ) {}
 
     /**

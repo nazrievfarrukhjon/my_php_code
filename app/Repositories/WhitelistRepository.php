@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\DB\Database;
+use App\DB\DBConnection;
 use App\Validations\WhiteliststoreValidation;
 use Exception;
 use PDO;
@@ -16,7 +16,7 @@ readonly class WhitelistRepository
     /**
      * @throws Exception
      */
-    public function __construct(private Database $myDb)
+    public function __construct(private DBConnection $myDb)
     {
         $this->connection = $this->myDb->connection();
     }

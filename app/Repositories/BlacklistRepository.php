@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\DB\Database;
+use App\DB\DBConnection;
 use App\Validations\BlacklistStoreValidation;
 use Exception;
 use PDO;
@@ -16,7 +16,7 @@ readonly class BlacklistRepository
     /**
      * @throws Exception
      */
-    public function __construct(Database $db)
+    public function __construct(DBConnection $db)
     {
         $this->connection = $db->connection();
     }

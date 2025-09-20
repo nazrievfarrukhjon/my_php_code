@@ -2,13 +2,13 @@
 
 namespace App;
 
-use App\DB\Database;
+use App\DB\DBConnection;
 use App\Log\LoggerInterface;
 
 readonly class Dispatcher
 {
     public function __construct(
-        private Database        $db,
+        private DBConnection        $db,
         private LoggerInterface $logger
     )
     {

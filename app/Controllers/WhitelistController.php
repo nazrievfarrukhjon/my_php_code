@@ -2,14 +2,14 @@
 
 namespace App\Controllers;
 
- use App\DB\Database;
+ use App\DB\DBConnection;
  use App\Repositories\WhitelistRepository;
  use Exception;
 
  readonly class WhitelistController implements ControllerInterface
  {
      private string $entityMethod;
-     private Database $db;
+     private DBConnection $db;
      private int $uriEmbeddedParam;
      private array $bodyParams;
 
@@ -18,7 +18,7 @@ namespace App\Controllers;
          array                      $bodyParams,
          string                     $entityMethod,
          int                        $uriEmbeddedParam,
-         Database $db,
+         DBConnection $db,
      ) {
             $this->entityMethod = $entityMethod;
             $this->uriEmbeddedParam = $uriEmbeddedParam;
