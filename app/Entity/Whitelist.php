@@ -13,7 +13,7 @@ use PDOException;
 readonly class Whitelist
 {
 
-    private Connection $connection;
+    private PDO $connection;
 
     /**
      * @throws Exception

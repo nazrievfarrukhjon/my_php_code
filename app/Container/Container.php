@@ -51,4 +51,14 @@ class Container implements ContainerInterface
     {
         return isset($this->services[$id]) || isset($this->factories[$id]);
     }
+
+    public function getServices(): array
+    {
+        return $this->services;
+    }
+
+    public function getFactories(): array
+    {
+        return $this->factories;
+    }
 }

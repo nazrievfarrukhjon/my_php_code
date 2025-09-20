@@ -6,7 +6,6 @@ use App\Container\Container;
 use App\DB\DatabaseConnectionInterface;
 use App\Dispatcher;
 use App\Log\LoggerInterface;
-use App\Routing\Router;
 use App\Routing\RoutesRegistration;
 use App\Routing\UrlAssociatedToController;
 use Exception;
@@ -46,11 +45,13 @@ readonly class WebRequest
         $bodyParams = $params['body'];
         $uriParams = $params['uri'];
 
+
         // 3
         $urlAssociatedToController = new UrlAssociatedToController(
             $this->httpUri->cleanUri(),
             $this->httpMethod,
-            $endpoints
+            $endpoints,
+            $this->logger,
         );
         $cm = $urlAssociatedToController->getControllerWithMethod();
         $controllerClass = $cm['controller'];

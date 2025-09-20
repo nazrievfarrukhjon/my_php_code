@@ -2,6 +2,7 @@
 
 namespace App\Routing;
 
+use App\Log\LoggerInterface;
 use Exception;
 
 readonly class UrlAssociatedToController
@@ -10,6 +11,7 @@ readonly class UrlAssociatedToController
         private string $httpUri,
         private string $httpMethod,
         private array  $endpoints,
+        private LoggerInterface $logger,
     ) {}
 
     /**

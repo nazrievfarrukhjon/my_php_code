@@ -14,6 +14,8 @@ use App\EntryPoints\Http\HttpUri;
 use App\EntryPoints\Http\WebRequest;
 use App\Env\Env;
 use App\Log\Logger;
+use App\Routing\Routs\BlacklistRoute;
+use App\Routing\Routs\WelcomeRoutes;
 use JetBrains\PhpStorm\NoReturn;
 
 #[NoReturn] function dd(...$args): void
@@ -82,7 +84,7 @@ $container->setFactory('app', function($c) {
 });
 
 
-$container->setFactory(WelcomeController::class, function($c) {
+$container->setFactory(WelcomeRoutes::class, function($c) {
     return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new WelcomeController(
         $uriParams,
         $bodyParams,
@@ -92,7 +94,7 @@ $container->setFactory(WelcomeController::class, function($c) {
     );
 });
 
-$container->setFactory(BlacklistController::class, function($c) {
+$container->setFactory(BlacklistRoute::class, function($c) {
     return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new BlacklistController(
         $uriParams,
         $bodyParams,

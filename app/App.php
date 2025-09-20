@@ -12,7 +12,7 @@ readonly class App
         private Env             $env,
         private LoggerInterface $logger,
         private ?\Closure       $cliFactory = null,
-        private ?\Closure       $httpRequestCallback = null,
+        private ?\Closure       $httpFactory = null,
     ) {}
 
     /**
@@ -28,7 +28,7 @@ readonly class App
         }
         $uri = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
 
-        $httpRequest = ($this->httpRequestCallback)(
+        $httpRequest = ($this->httpFactory)(
             $uri,
             $method,
             $contentType,

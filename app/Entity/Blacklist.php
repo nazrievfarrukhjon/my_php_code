@@ -12,7 +12,7 @@ use PDOException;
 readonly class Blacklist
 {
 
-    private Connection $connection;
+    private PDO $connection;
 
     /**
      * @throws Exception

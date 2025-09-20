@@ -34,7 +34,7 @@ class RoutesRegistration
 
         $routes = [];
         foreach ($this->endpoints as $endpoint) {
-            $ep = new $endpoint($this->container);
+            $ep = new $endpoint($routes);
             $routes = $ep->endpoints();
         }
 
