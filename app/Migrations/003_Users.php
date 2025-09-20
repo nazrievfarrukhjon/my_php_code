@@ -2,7 +2,9 @@
 
 namespace App\Migrations;
 
-use App\DB\DatabaseConnectionInterface;
+use App\DB\Database;
+use App\DB\PostgresDatabase;
+use App\DB\SqliteDatabase;
 use App\Migrations\Operations\Migration;
 use Exception;
 use PDO;
@@ -10,7 +12,7 @@ use PDO;
 class Users implements Migration
 {
     public function __construct(
-        private DatabaseConnectionInterface $db
+        private Database $db
     ) {}
 
     /**
@@ -22,7 +24,7 @@ class Users implements Migration
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Polymorphic SQL depending on DB type
-        if ($this->db instanceof \App\DB\Postgres) {
+        if ($this->db instanceof PostgresDatabase) {
             $sql = "
                 CREATE TABLE IF NOT EXISTS users (
                     id BIGSERIAL PRIMARY KEY,
@@ -31,7 +33,7 @@ class Users implements Migration
                     password VARCHAR(255)
                 );
             ";
-        } elseif ($this->db instanceof \App\DB\Sqlite) {
+        } elseif ($this->db instanceof SqliteDatabase) {
             $sql = "
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,

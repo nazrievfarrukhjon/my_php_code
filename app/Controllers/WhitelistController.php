@@ -2,14 +2,14 @@
 
 namespace App\Controllers;
 
- use App\DB\DatabaseConnectionInterface;
- use App\Entity\Whitelist;
+ use App\DB\Database;
+ use App\Repositories\WhitelistRepository;
  use Exception;
 
  readonly class WhitelistController implements ControllerInterface
  {
      private string $entityMethod;
-     private DatabaseConnectionInterface $db;
+     private Database $db;
      private int $uriEmbeddedParam;
      private array $bodyParams;
 
@@ -18,7 +18,7 @@ namespace App\Controllers;
          array                      $bodyParams,
          string                     $entityMethod,
          int                        $uriEmbeddedParam,
-         DatabaseConnectionInterface $db,
+         Database $db,
      ) {
             $this->entityMethod = $entityMethod;
             $this->uriEmbeddedParam = $uriEmbeddedParam;
@@ -36,7 +36,7 @@ namespace App\Controllers;
       */
      public function index(): array
      {
-         $whitelist = new Whitelist($this->db);
+         $whitelist = new WhitelistRepository($this->db);
          return $whitelist->all();
      }
 
@@ -45,7 +45,7 @@ namespace App\Controllers;
       */
      public function store(): string
      {
-         $whitelist = new Whitelist($this->db);
+         $whitelist = new WhitelistRepository($this->db);
          $whitelist->store($this->bodyParams);
          return 'stored!';
      }
@@ -55,7 +55,7 @@ namespace App\Controllers;
       */
      public function update(): string
      {
-         $whitelist = new Whitelist($this->db);
+         $whitelist = new WhitelistRepository($this->db);
          $whitelist->update($this->uriEmbeddedParam, $this->bodyParams);
          return 'updated!';
      }
@@ -65,7 +65,7 @@ namespace App\Controllers;
       */
      public function delete(): string
      {
-         $whitelist = new Whitelist($this->db);
+         $whitelist = new WhitelistRepository($this->db);
          $whitelist->delete($this->uriEmbeddedParam);
          return 'deleted';
      }

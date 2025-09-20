@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
-class WhitelistService {
-    public function __construct(private WhitelistRepositoryInterface $repo) {}
+use App\Repositories\WhitelistRepository;
+
+readonly class WhitelistService {
+    public function __construct(private WhitelistRepository $repo) {}
 
     public function getAll(): array {
-        return $repo->all();
+        return $this->repo->all();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Routing\Routs;
+namespace App\Routing;
 
 use App\Controllers\BlacklistController;
 

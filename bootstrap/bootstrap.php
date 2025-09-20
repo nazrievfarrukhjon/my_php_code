@@ -5,17 +5,17 @@ use App\Container\Container;
 use App\Controllers\BlacklistController;
 use App\Controllers\WelcomeController;
 use App\Controllers\WhitelistController;
-use App\DB\Postgres;
-use App\DB\Sqlite;
-use App\Entity\Whitelist;
+use App\DB\DatabaseFactory;
+use App\DB\PostgresDatabase;
 use App\EntryPoints\Console\Console;
 use App\EntryPoints\Console\ConsoleWithResponse;
 use App\EntryPoints\Http\HttpUri;
 use App\EntryPoints\Http\WebRequest;
 use App\Env\Env;
 use App\Log\Logger;
-use App\Routing\Routs\BlacklistRoute;
-use App\Routing\Routs\WelcomeRoutes;
+use App\Repositories\WhitelistRepository;
+use App\Routing\BlacklistRoute;
+use App\Routing\WelcomeRoutes;
 use JetBrains\PhpStorm\NoReturn;
 
 #[NoReturn] function dd(...$args): void
@@ -33,30 +33,23 @@ $container->setFactory('env', function() {
     return new Env(__DIR__ . '/../.env');
 });
 
-// Logger service (PSR-3)
 $container->setFactory('logger', function() {
-    $logger = new Logger('app');
-//    $logger->pushHandler(new StreamHandler(__DIR__ . '/../logs/app.log', Logger::DEBUG));
-    return $logger;
+    return Logger::getInstance();
 });
 
 
 $container->setFactory('db', function($c) {
     $env = $c->get('env');
     $connection = $env->get('DB_CONNECTION');
-
     $c->get('logger')->info("Using DB_CONNECTION: {$connection}");
 
-    return match ($connection) {
-        'pgsql' => new Postgres($env),
-        'sqlite' => new Sqlite($env),
-        default => throw new \RuntimeException("Unsupported DB_CONNECTION: {$connection}"),
-    };
+    $databaseFactory = new DatabaseFactory();
+    return $databaseFactory->create($env);
 });
 
 
 $container->setFactory('whitelist', function($c) {
-    return new Whitelist($c->get('db'));
+    return new WhitelistRepository($c->get('db'));
 });
 
 $container->setFactory('app', function($c) {

@@ -1,13 +1,13 @@
 <?php
 namespace App\Migrations\Operations;
 
-use App\DB\DatabaseConnectionInterface;
+use App\DB\Database;
 use Exception;
 
 readonly class MigrationFilesSqlQuery
 {
     public function __construct(
-        private DatabaseConnectionInterface $db
+        private Database $db
     ) {}
 
     /**

@@ -4,9 +4,6 @@ namespace App\Routing;
 
 use App\Cache\Cache;
 use App\Container\Container;
-use App\Routing\Routs\BlacklistRoute;
-use App\Routing\Routs\WelcomeRoutes;
-use App\Routing\Routs\WhitelistRoute;
 
 class RoutesRegistration
 {

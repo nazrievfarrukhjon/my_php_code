@@ -2,7 +2,7 @@
 
 namespace App\EntryPoints\Console;
 use App\Cache\Cache;
-use App\DB\DatabaseConnectionInterface;
+use App\DB\Database;
 use App\Migrations\Operations\MigrationFilesSqlQuery;
 use Exception;
 
@@ -13,7 +13,7 @@ class Console
         private readonly string                      $commandName,
         private readonly string                      $argOne,
         private string                               $argTwo,
-        private readonly DatabaseConnectionInterface $db,
+        private readonly Database $db,
     )
     {
     }

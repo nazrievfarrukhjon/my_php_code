@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Repositories;
 
-readonly class Index
+readonly class FinderRepository
 {
     public function __construct(private string $word)
     {

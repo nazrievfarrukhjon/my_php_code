@@ -3,7 +3,7 @@
 namespace App\EntryPoints\Http;
 
 use App\Container\Container;
-use App\DB\DatabaseConnectionInterface;
+use App\DB\Database;
 use App\Dispatcher;
 use App\Log\LoggerInterface;
 use App\Routing\RoutesRegistration;
@@ -18,7 +18,7 @@ readonly class WebRequest
         private string          $httpMethod,
         private string          $contentType,
         private array           $bodyContents,
-        private DatabaseConnectionInterface        $db,
+        private Database        $db,
         private LoggerInterface $logger,
         private Container $container,
     )

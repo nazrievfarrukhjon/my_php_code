@@ -1,16 +1,14 @@
 <?php
 
-namespace App\Entity;
+namespace App\Repositories;
 
-use App\DB\Connection;
-use App\DB\DatabaseConnectionInterface;
-use App\DB\Postgres;
-use App\Validations\WhiteliststoreValidation;
+use App\DB\Database;
+use App\Validations\BlacklistStoreValidation;
 use Exception;
 use PDO;
 use PDOException;
 
-readonly class Whitelist
+readonly class BlacklistRepository
 {
 
     private PDO $connection;
@@ -18,16 +16,16 @@ readonly class Whitelist
     /**
      * @throws Exception
      */
-    public function __construct(private DatabaseConnectionInterface $myDb)
+    public function __construct(Database $db)
     {
-        $this->connection = $this->myDb->connection();
+        $this->connection = $db->connection();
     }
 
     public function all(): array
     {
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $query = "SELECT * FROM whitelists";
+            $query = "SELECT * FROM blacklists";
             $statement = $this->connection->prepare($query);
             $statement->execute();
 
@@ -40,12 +38,12 @@ readonly class Whitelist
     public function store(array $params): void
     {
         try {
-            (new WhitelistStoreValidation($params))->check();
+            (new BlacklistStoreValidation($params))->check();
 
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Construct the INSERT query
-            $query = "INSERT INTO whitelists (first_name, second_name, third_name, fourth_name, type, birth_date) VALUES (?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO blacklists (first_name, second_name, third_name, fourth_name, type, birth_date) VALUES (?, ?, ?, ?, ?, ?)";
 
             // Prepare the statement
             $statement = $this->connection->prepare($query);
@@ -66,7 +64,7 @@ readonly class Whitelist
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Construct the DELETE query
-            $query = "DELETE FROM whitelists WHERE id = ?";
+            $query = "DELETE FROM blacklists WHERE id = ?";
 
             // Prepare the statement
             $statement = $this->connection->prepare($query);
@@ -87,7 +85,7 @@ readonly class Whitelist
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Construct the UPDATE query
-            $query = "UPDATE whitelists SET first_name = ?, second_name = ?, third_name = ?, fourth_name = ?, type = ?, birth_date = ? WHERE id = ?";
+            $query = "UPDATE blacklists SET first_name = ?, second_name = ?, third_name = ?, fourth_name = ?, type = ?, birth_date = ? WHERE id = ?";
 
             // Prepare the statement
             $statement = $this->connection->prepare($query);

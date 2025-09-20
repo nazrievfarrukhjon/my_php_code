@@ -2,24 +2,27 @@
 
 namespace App\Migrations;
 
-use App\DB\DatabaseConnectionInterface;
-use App\DB\Postgres;
-use App\DB\Sqlite;
+use App\DB\Database;
+use App\DB\PostgresDatabase;
+use App\DB\SqliteDatabase;
 use App\Migrations\Operations\Migration;
 use PDO;
 
 readonly class Blacklists implements Migration
 {
     public function __construct(
-        private DatabaseConnectionInterface $db
+        private Database $db
     ) {}
 
+    /**
+     * @throws \Exception
+     */
     public function migrate(): void
     {
         $conn = $this->db->connection();
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        if ($this->db instanceof Postgres) {
+        if ($this->db instanceof PostgresDatabase) {
             $sql = "
                 CREATE TABLE IF NOT EXISTS blacklists (
                     id BIGSERIAL PRIMARY KEY,
@@ -31,7 +34,7 @@ readonly class Blacklists implements Migration
                     birth_date DATE
                 );
             ";
-        } elseif ($this->db instanceof Sqlite) {
+        } elseif ($this->db instanceof SqliteDatabase) {
             $sql = '
                 CREATE TABLE IF NOT EXISTS blacklists (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Routing\Routs;
+namespace App\Routing;
 
 
 abstract class AEndpointSuperClass

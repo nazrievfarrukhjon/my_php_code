@@ -2,14 +2,14 @@
 
 namespace App\Controllers;
 
- use App\DB\DatabaseConnectionInterface;
- use App\Entity\Blacklist;
+ use App\DB\Database;
+ use App\Repositories\BlacklistRepository;
  use Exception;
 
  readonly class BlacklistController implements ControllerInterface
 {
      private string $entityMethod;
-     private DatabaseConnectionInterface $db;
+     private Database $db;
      private int $uriEmbeddedParam;
      private array $bodyParams;
 
@@ -18,7 +18,7 @@ namespace App\Controllers;
          array $bodyParams,
          string $entityMethod,
          int $uriEmbeddedParam,
-         DatabaseConnectionInterface $db
+         Database $db
      ) {
          $this->entityMethod = $entityMethod;
          $this->db = $db;
@@ -37,7 +37,7 @@ namespace App\Controllers;
       */
      public function index(): array
     {
-        $blacklist = new Blacklist($this->db);
+        $blacklist = new BlacklistRepository($this->db);
 
         return $blacklist->all();
     }
@@ -47,7 +47,7 @@ namespace App\Controllers;
       */
      public function store(): string
      {
-        (new Blacklist($this->db))->store($this->bodyParams);
+        (new BlacklistRepository($this->db))->store($this->bodyParams);
 
         return 'stored!';
     }
@@ -57,7 +57,7 @@ namespace App\Controllers;
       */
      public function update(): string
     {
-        (new Blacklist($this->db))->update($this->uriEmbeddedParam, $this->bodyParams);
+        (new BlacklistRepository($this->db))->update($this->uriEmbeddedParam, $this->bodyParams);
 
         return 'updated!';
     }
@@ -67,7 +67,7 @@ namespace App\Controllers;
       */
      public function delete(): string
     {
-        (new Blacklist($this->db))->delete($this->uriEmbeddedParam);
+        (new BlacklistRepository($this->db))->delete($this->uriEmbeddedParam);
 
         return 'deleted';
     }

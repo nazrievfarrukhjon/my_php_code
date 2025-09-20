@@ -2,13 +2,13 @@
 
 namespace App\Controllers;
 
-use App\DB\DatabaseConnectionInterface;
+use App\DB\Database;
 use Exception;
 
 readonly class WelcomeController implements ControllerInterface
 {
     private string $entityMethod;
-    private DatabaseConnectionInterface $db;
+    private Database $db;
     private int $uriEmbeddedParam;
     private array $bodyParams;
 
@@ -17,7 +17,7 @@ readonly class WelcomeController implements ControllerInterface
         array $bodyParams,
         string $entityMethod,
         int $uriEmbeddedParam,
-        DatabaseConnectionInterface $db
+        Database $db
     ) {
         $this->entityMethod = $entityMethod;
         $this->db = $db;
