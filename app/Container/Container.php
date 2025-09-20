@@ -40,7 +40,7 @@ class Container implements ContainerInterface
             return $this->services[$id];
         }
 
-        throw new class("Service {$id} not found") extends \Exception implements NotFoundExceptionInterface {
+        throw new class("Service Container: service_id {$id} not found") extends \Exception implements NotFoundExceptionInterface {
         };
     }
 

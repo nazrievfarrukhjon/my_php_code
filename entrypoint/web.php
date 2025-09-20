@@ -19,8 +19,9 @@ $httpRequestCallback = fn($uri, $method, $contentType, $bodyReq) => new WebReque
     $method,
     $contentType,
     $bodyReq,
-    $container->get('my_db'),
-    $logger
+    $container->get('db'),
+    $logger,
+    $container,
 );
 
 

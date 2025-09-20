@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\DB\Connection;
+use App\DB\DatabaseConnectionInterface;
 use App\DB\Postgres;
 use App\Validations\WhiteliststoreValidation;
 use Exception;
@@ -17,7 +18,7 @@ readonly class Whitelist
     /**
      * @throws Exception
      */
-    public function __construct(private Postgres $myDb)
+    public function __construct(private DatabaseConnectionInterface $myDb)
     {
         $this->connection = $this->myDb->connection();
     }

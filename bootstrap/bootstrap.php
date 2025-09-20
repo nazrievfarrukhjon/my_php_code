@@ -2,6 +2,9 @@
 
 use App\App;
 use App\Container\Container;
+use App\Controllers\BlacklistController;
+use App\Controllers\WelcomeController;
+use App\Controllers\WhitelistController;
 use App\DB\Postgres;
 use App\DB\Sqlite;
 use App\Entity\Whitelist;
@@ -64,15 +67,49 @@ $container->setFactory('app', function($c) {
             $contentType,
             $data,
             $c->get('db'),
-            $c->get('logger')
+            $c->get('logger'),
+            $c,
         ),
         fn($argv) => new ConsoleWithResponse(
-            new Console($argv[1] ?? '', $argv[2] ?? 'absent', $argv[3] ?? 'absent')
-        )
+            new Console(
+                $argv[1] ?? '',
+                    $argv[2] ?? 'absent',
+                    $argv[3] ?? 'absent',
+                $c->get('db'),
+            )
+        ),
     );
 });
 
 
+$container->setFactory(WelcomeController::class, function($c) {
+    return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new WelcomeController(
+        $uriParams,
+        $bodyParams,
+        $entityMethod,
+        $uriEmbeddedParams,
+        $c->get('db'),
+    );
+});
 
+$container->setFactory(BlacklistController::class, function($c) {
+    return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new BlacklistController(
+        $uriParams,
+        $bodyParams,
+        $entityMethod,
+        $uriEmbeddedParams,
+        $c->get('db'),
+    );
+});
+
+$container->setFactory(WhitelistController::class, function($c) {
+    return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new WhitelistController(
+        $uriParams,
+        $bodyParams,
+        $entityMethod,
+        $uriEmbeddedParams,
+        $c->get('db'),
+    );
+});
 
 return $container;

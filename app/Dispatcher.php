@@ -2,13 +2,14 @@
 
 namespace App;
 
+use App\DB\DatabaseConnectionInterface;
 use App\DB\Postgres;
 use App\Log\LoggerInterface;
 
 readonly class Dispatcher
 {
     public function __construct(
-        private Postgres        $db,
+        private DatabaseConnectionInterface        $db,
         private LoggerInterface $logger
     )
     {
@@ -30,6 +31,8 @@ readonly class Dispatcher
             $this->db,
             $this->logger
         );
+
+        $this->logger->info("2 Dispatching to controller: $controllerClass, method: $method");
 
         return $controller();
     }

@@ -2,22 +2,26 @@
 
 namespace App\EntryPoints\Http;
 
-use App\DB\Postgres;
+use App\Container\Container;
+use App\DB\DatabaseConnectionInterface;
 use App\Dispatcher;
 use App\Log\LoggerInterface;
 use App\Routing\Router;
 use App\Routing\RoutesRegistration;
+use App\Routing\UrlAssociatedToController;
 use Exception;
 
 readonly class WebRequest
 {
+
     public function __construct(
         private HttpUri         $httpUri,
         private string          $httpMethod,
         private string          $contentType,
         private array           $bodyContents,
-        private Postgres        $myDb,
-        private LoggerInterface $logger
+        private DatabaseConnectionInterface        $db,
+        private LoggerInterface $logger,
+        private Container $container,
     )
     {
     }
@@ -28,7 +32,7 @@ readonly class WebRequest
     public function handle(): void
     {
         // 1
-        $endpoints = (new RoutesRegistration())->endpoints();
+        $endpoints = (new RoutesRegistration($this->container))->endpoints();
 
         // 2
         $requestParser = new RequestParser(
@@ -43,13 +47,17 @@ readonly class WebRequest
         $uriParams = $params['uri'];
 
         // 3
-        $router = new Router($endpoints);
-        $route = $router->match($this->httpUri->cleanUri(), $this->httpMethod);
-        $controllerClass = $route['controller'];
-        $method = $route['method'];
+        $urlAssociatedToController = new UrlAssociatedToController(
+            $this->httpUri->cleanUri(),
+            $this->httpMethod,
+            $endpoints
+        );
+        $cm = $urlAssociatedToController->getControllerWithMethod();
+        $controllerClass = $cm['controller'];
+        $method = $cm['method'];
 
         // 4
-        $dispatcher = new Dispatcher($this->myDb, $this->logger);
+        $dispatcher = new Dispatcher($this->db, $this->logger);
 
         try {
             $response = $dispatcher->dispatch(

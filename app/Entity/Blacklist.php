@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\DB\Connection;
-use App\DB\Postgres;
+use App\DB\DatabaseConnectionInterface;
 use App\Validations\BlacklistStoreValidation;
 use Exception;
 use PDO;
@@ -17,7 +17,7 @@ readonly class Blacklist
     /**
      * @throws Exception
      */
-    public function __construct(Postgres $myDb)
+    public function __construct(DatabaseConnectionInterface $myDb)
     {
         $this->connection = $myDb->connection();
     }

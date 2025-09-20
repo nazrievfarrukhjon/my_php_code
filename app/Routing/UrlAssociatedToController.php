@@ -15,7 +15,7 @@ readonly class UrlAssociatedToController
     /**
      * @throws Exception
      */
-    public function getController(): string
+    private function getController()
     {
         if (isset($this->endpoints[$this->httpMethod][$this->httpUri])) {
             return $this->endpoints[$this->httpMethod][$this->httpUri][0];
@@ -27,7 +27,7 @@ readonly class UrlAssociatedToController
     /**
      * @throws Exception
      */
-    public function getMethod(): string
+    private function getMethod(): string
     {
         if (isset($this->endpoints[$this->httpMethod][$this->httpUri])) {
             return $this->endpoints[$this->httpMethod][$this->httpUri][1];
@@ -46,6 +46,18 @@ readonly class UrlAssociatedToController
         }
 
         throw new Exception('route not found arguments');
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function getControllerWithMethod(): array
+    {
+        return [
+            'controller' => $this->getController(),
+            'method' => $this->getMethod(),
+        ];
     }
 
 }

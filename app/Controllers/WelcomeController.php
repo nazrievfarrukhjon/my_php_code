@@ -2,13 +2,13 @@
 
 namespace App\Controllers;
 
-use App\DB\Postgres;
+use App\DB\DatabaseConnectionInterface;
 use Exception;
 
 readonly class WelcomeController implements ControllerInterface
 {
     private string $entityMethod;
-    private Postgres $myDb;
+    private DatabaseConnectionInterface $db;
     private int $uriEmbeddedParam;
     private array $bodyParams;
 
@@ -17,10 +17,10 @@ readonly class WelcomeController implements ControllerInterface
         array $bodyParams,
         string $entityMethod,
         int $uriEmbeddedParam,
-        Postgres $db
+        DatabaseConnectionInterface $db
     ) {
         $this->entityMethod = $entityMethod;
-        $this->myDb = $db;
+        $this->db = $db;
         $this->uriEmbeddedParam = $uriEmbeddedParam;
         $this->bodyParams = $bodyParams;
     }

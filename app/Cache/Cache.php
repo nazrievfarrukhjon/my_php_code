@@ -2,8 +2,7 @@
 
 namespace App\Cache;
 
-//implement psr-16 cache interface
-class Cache
+class Cache implements CacheItemInterface
 {
 
     const ENDPOINT_FILE_PATH = __DIR__ . '/../../conf/endpoints.php';
@@ -32,4 +31,33 @@ class Cache
     }
 
 
+    public function getKey()
+    {
+        // TODO: Implement getKey() method.
+    }
+
+    public function get()
+    {
+        // TODO: Implement get() method.
+    }
+
+    public function isHit()
+    {
+        // TODO: Implement isHit() method.
+    }
+
+    public function set($value)
+    {
+        // TODO: Implement set() method.
+    }
+
+    public function expiresAt($expiration)
+    {
+        // TODO: Implement expiresAt() method.
+    }
+
+    public function expiresAfter($time)
+    {
+        // TODO: Implement expiresAfter() method.
+    }
 }
