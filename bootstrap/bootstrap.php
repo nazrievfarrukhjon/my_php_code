@@ -9,6 +9,9 @@ use App\Controllers\WhitelistController;
 use App\DB\DBFactories\MysqlFactory;
 use App\DB\DBFactories\PostgresFactory;
 use App\DB\DBFactories\SqliteFactory;
+use App\EntryPoints\Console\Commands\ClearCacheCommand;
+use App\EntryPoints\Console\Commands\MigrateCommand;
+use App\EntryPoints\Console\Commands\RollbackCommand;
 use App\EntryPoints\Console\Console;
 use App\EntryPoints\Console\ConsoleWithResponse;
 use App\EntryPoints\Http\HttpUri;
@@ -83,12 +86,11 @@ $container->setFactory('app', function($c) {
             $c,
         ),
         fn($argv) => new ConsoleWithResponse(
-            new Console(
-                $argv[1] ?? '',
-                    $argv[2] ?? 'absent',
-                    $argv[3] ?? 'absent',
-                $c->get('db'),
-            )
+            new Console([
+                    'migrate' => new MigrateCommand($c->get('db'), 'migrate'),
+                    'rollback' => new RollbackCommand($c->get('db')),
+                    'cache:clean' => new ClearCacheCommand($c->get('route_cache')),
+                ])
         ),
     );
 });
@@ -97,10 +99,6 @@ $container->setFactory('app', function($c) {
 $container->setFactory(WelcomeRoutes::class, function($c) {
     return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new WelcomeController(
         $uriParams,
-        $bodyParams,
-        $entityMethod,
-        $uriEmbeddedParams,
-        $c->get('db'),
     );
 });
 

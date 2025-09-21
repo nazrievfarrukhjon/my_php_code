@@ -84,16 +84,12 @@ readonly class BlacklistRepository
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            // Construct the UPDATE query
             $query = "UPDATE blacklists SET first_name = ?, second_name = ?, third_name = ?, fourth_name = ?, type = ?, birth_date = ? WHERE id = ?";
 
-            // Prepare the statement
             $statement = $this->connection->prepare($query);
 
-            // Execute the statement with parameters
             $statement->execute([$params['first_name'], $params['second_name'], $params['third_name'], $params['fourth_name'], $params['type'], $params['birth_date'], $id]);
 
-            // Return success message or any other appropriate response
             return ["Success: Record updated successfully"];
         } catch (Exception $e) {
             return ["Error: " . $e->getMessage()];

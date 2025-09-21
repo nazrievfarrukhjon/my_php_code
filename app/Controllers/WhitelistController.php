@@ -13,6 +13,11 @@ namespace App\Controllers;
      private int $uriEmbeddedParam;
      private array $bodyParams;
 
+     private WhitelistRepository $repo;
+
+     /**
+      * @throws Exception
+      */
      public function __construct(
          array                      $uriParams,
          array                      $bodyParams,
@@ -24,6 +29,7 @@ namespace App\Controllers;
             $this->uriEmbeddedParam = $uriEmbeddedParam;
             $this->bodyParams = $bodyParams;
             $this->db = $db;
+            $this->repo = new  WhitelistRepository($this->db);
      }
 
      public function __invoke()
@@ -36,8 +42,7 @@ namespace App\Controllers;
       */
      public function index(): array
      {
-         $whitelist = new WhitelistRepository($this->db);
-         return $whitelist->all();
+         return $this->repo->all();
      }
 
      /**
@@ -45,8 +50,7 @@ namespace App\Controllers;
       */
      public function store(): string
      {
-         $whitelist = new WhitelistRepository($this->db);
-         $whitelist->store($this->bodyParams);
+         $this->repo->store($this->bodyParams);
          return 'stored!';
      }
 
@@ -55,8 +59,7 @@ namespace App\Controllers;
       */
      public function update(): string
      {
-         $whitelist = new WhitelistRepository($this->db);
-         $whitelist->update($this->uriEmbeddedParam, $this->bodyParams);
+         $this->repo->update($this->uriEmbeddedParam, $this->bodyParams);
          return 'updated!';
      }
 
@@ -65,8 +68,7 @@ namespace App\Controllers;
       */
      public function delete(): string
      {
-         $whitelist = new WhitelistRepository($this->db);
-         $whitelist->delete($this->uriEmbeddedParam);
+         $this->repo->delete($this->uriEmbeddedParam);
          return 'deleted';
      }
  }

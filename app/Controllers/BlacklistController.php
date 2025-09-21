@@ -13,17 +13,23 @@ namespace App\Controllers;
      private int $uriEmbeddedParam;
      private array $bodyParams;
 
+     private BlacklistRepository $repository;
+
+     /**
+      * @throws Exception
+      */
      public function __construct(
          array $uriParams,
          array $bodyParams,
          string $entityMethod,
          int $uriEmbeddedParam,
-         Database $db
+         DBConnection $db
      ) {
          $this->entityMethod = $entityMethod;
          $this->db = $db;
          $this->uriEmbeddedParam = $uriEmbeddedParam;
          $this->bodyParams = $bodyParams;
+         $this->repository = new BlacklistRepository($this->db);
      }
 
     public function __invoke()
@@ -37,9 +43,7 @@ namespace App\Controllers;
       */
      public function index(): array
     {
-        $blacklist = new BlacklistRepository($this->db);
-
-        return $blacklist->all();
+        return $this->repository->all();
     }
 
      /**
@@ -47,7 +51,7 @@ namespace App\Controllers;
       */
      public function store(): string
      {
-        (new BlacklistRepository($this->db))->store($this->bodyParams);
+         $this->repository->store($this->bodyParams);
 
         return 'stored!';
     }
@@ -57,7 +61,7 @@ namespace App\Controllers;
       */
      public function update(): string
     {
-        (new BlacklistRepository($this->db))->update($this->uriEmbeddedParam, $this->bodyParams);
+        $this->repository->update($this->uriEmbeddedParam, $this->bodyParams);
 
         return 'updated!';
     }
@@ -67,7 +71,7 @@ namespace App\Controllers;
       */
      public function delete(): string
     {
-        (new BlacklistRepository($this->db))->delete($this->uriEmbeddedParam);
+        $this->repository->delete($this->uriEmbeddedParam);
 
         return 'deleted';
     }
