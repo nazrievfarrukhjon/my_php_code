@@ -2,8 +2,8 @@
 
 namespace App\Migrations;
 
-use App\DB\ConcreteProducts\ConcreteDB\PostgresDatabase;
-use App\DB\ConcreteProducts\ConcreteDB\SqliteDatabase;
+use App\DB\ConcreteImplementations\ConcreteDB\PostgresDatabase;
+use App\DB\ConcreteImplementations\ConcreteDB\SqliteDatabase;
 use App\DB\Contracts\DBConnection;
 use App\Migrations\Operations\Migration;
 use Exception;
