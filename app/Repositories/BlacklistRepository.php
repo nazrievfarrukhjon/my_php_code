@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\DB\DBConnection;
+use App\DB\Contracts\DBConnection;
 use App\Validations\BlacklistStoreValidation;
 use Exception;
 use PDO;

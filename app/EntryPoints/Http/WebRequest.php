@@ -3,7 +3,7 @@
 namespace App\EntryPoints\Http;
 
 use App\Container\Container;
-use App\DB\DBConnection;
+use App\DB\Contracts\DBConnection;
 use App\Dispatcher;
 use App\Log\LoggerInterface;
 use App\Routing\RoutesRegistration;

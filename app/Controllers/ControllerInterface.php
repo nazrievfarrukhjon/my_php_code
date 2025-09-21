@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\DB\DBConnection;
+use App\DB\Contracts\DBConnection;
 
 interface ControllerInterface
 {

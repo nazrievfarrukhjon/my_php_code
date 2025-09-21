@@ -2,7 +2,7 @@
 
 namespace App\EntryPoints\Console;
 use App\Cache\Cache;
-use App\DB\DBConnection;
+use App\DB\Contracts\DBConnection;
 use App\Migrations\Operations\MigrationFilesSqlQuery;
 use Exception;
 

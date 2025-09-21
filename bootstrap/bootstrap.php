@@ -5,7 +5,9 @@ use App\Container\Container;
 use App\Controllers\BlacklistController;
 use App\Controllers\WelcomeController;
 use App\Controllers\WhitelistController;
-use App\DB\DatabaseFactory;
+use App\DB\DBFactories\MysqlFactory;
+use App\DB\DBFactories\PostgresFactory;
+use App\DB\DBFactories\SqliteFactory;
 use App\EntryPoints\Console\Console;
 use App\EntryPoints\Console\ConsoleWithResponse;
 use App\EntryPoints\Http\HttpUri;
@@ -40,11 +42,15 @@ $container->setFactory('logger', function() {
 $container->setFactory('db', function($c) {
     $env = $c->get('env');
     $connection = $env->get('DB_CONNECTION');
-    $c->get('logger')->info("Using DB_CONNECTION: {$connection}");
-
-    $databaseFactory = new DatabaseFactory();
-    return $databaseFactory->createConnection($env);
+    $factory = match($connection) {
+        'mysql'  => new MysqlFactory($env),
+        'pgsql'  => new PostgresFactory($env),
+        'sqlite' => new SqliteFactory($env),
+        default  => throw new RuntimeException("Unsupported DB_CONNECTION: $connection"),
+    };
+    return $factory->createConnection();
 });
+
 
 
 $container->setFactory('whitelist', function($c) {

@@ -2,9 +2,9 @@
 
 namespace App\Migrations;
 
-use App\DB\DBConnection;
-use App\DB\PostgresDatabase;
-use App\DB\SqliteDatabase;
+use App\DB\ConcreteProducts\ConcreteDB\PostgresDatabase;
+use App\DB\ConcreteProducts\ConcreteDB\SqliteDatabase;
+use App\DB\Contracts\DBConnection;
 use App\Migrations\Operations\Migration;
 use PDO;
 

@@ -1,7 +1,7 @@
 <?php
 namespace App\Migrations\Operations;
 
-use App\DB\DBConnection;
+use App\DB\Contracts\DBConnection;
 use Exception;
 
 readonly class MigrationFilesSqlQuery

@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\DB\DBConnection;
+use App\DB\Contracts\DBConnection;
 use App\Log\LoggerInterface;
 
 readonly class Dispatcher
