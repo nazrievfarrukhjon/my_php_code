@@ -16,7 +16,7 @@ final readonly class SqliteFactory implements DBAbstractFactory
     public function createConnection(): DBConnection
     {
         return new SqliteDatabase(
-            $this->env->get('DB_PATH') ?? __DIR__ . '/../../../database.sqlite'
+            $this->env->get('DB_PATH') ?? ROOT_DIR . '/database.sqlite'
         );
     }
 

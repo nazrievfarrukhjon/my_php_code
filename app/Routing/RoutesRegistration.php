@@ -2,12 +2,11 @@
 
 namespace App\Routing;
 
-use App\Cache\Cache;
+use App\Cache\FileCache;
 use App\Container\Container;
 
 class RoutesRegistration
 {
-    private Cache $cache;
     private Container $container;
 
     private array $endpoints = [
@@ -18,25 +17,26 @@ class RoutesRegistration
 
     public function __construct(Container $container)
     {
-        $this->cache = new Cache();
         $this->container = $container;
     }
 
     public function endpoints(): array
     {
-        $endpointsFromCache = $this->cache->endpoints();
-        if (!empty($endpointsFromCache)) {
-            return $endpointsFromCache;
+        $cache = new FileCache(ROOT_DIR . '/storage/endpoints.php');
+
+        $endpoints = $cache->get('routes', []);
+
+        if (empty($endpoints)) {
+            $routes = [];
+            foreach ($this->endpoints as $endpoint) {
+                $ep = new $endpoint($routes);
+                $routes = $ep->endpoints();
+            }
+
+            $cache->set('routes', $routes);
         }
 
-        $routes = [];
-        foreach ($this->endpoints as $endpoint) {
-            $ep = new $endpoint($routes);
-            $routes = $ep->endpoints();
-        }
 
-        $this->cache->storeEndpoints($routes);
-
-        return $routes;
+        return $cache->get('routes', []);
     }
 }

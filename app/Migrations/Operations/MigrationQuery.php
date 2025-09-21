@@ -4,7 +4,7 @@ namespace App\Migrations\Operations;
 use App\DB\Contracts\DBConnection;
 use Exception;
 
-readonly class MigrationFilesSqlQuery
+readonly class MigrationQuery
 {
     public function __construct(
         private DBConnection $db
@@ -15,9 +15,9 @@ readonly class MigrationFilesSqlQuery
      * @param string $method "migrate" or "rollback"
      * @throws Exception
      */
-    public function query(string $method): void
+    public function run(string $method): void
     {
-        $directory = __DIR__ . '/../../Migrations';
+        $directory = ROUTE_ . '/../../Migrations';
         $fileNames = scandir($directory);
 
         // filter only files like "123_Blacklists.php"

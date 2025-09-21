@@ -1,6 +1,7 @@
 <?php
 
 use App\App;
+use App\Cache\FileCache;
 use App\Container\Container;
 use App\Controllers\BlacklistController;
 use App\Controllers\WelcomeController;
@@ -31,13 +32,24 @@ $container = new Container();
 
 // Env service
 $container->setFactory('env', function() {
-    return new Env(__DIR__ . '/../.env');
+    return new Env(ROOT_DIR . '/.env');
 });
 
 $container->setFactory('logger', function() {
     return Logger::getInstance();
 });
 
+$container->setFactory('logger', function() {
+    return Logger::getInstance();
+});
+
+$container->setFactory('route_cache', function() {
+    $routeCacheDir = ROOT_DIR . '/storage/endpoints.php';
+    if (!is_dir($routeCacheDir)) {
+        mkdir($routeCacheDir, 0755, true);
+    }
+    return new FileCache($routeCacheDir);
+});
 
 $container->setFactory('db', function($c) {
     $env = $c->get('env');

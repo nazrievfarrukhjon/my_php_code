@@ -64,7 +64,7 @@ class Logger implements LoggerInterface
         $formatted = "[{$time}] {$level}: {$message} " . json_encode($context) . "\n";
 
         // Send to PHP's error log
-        error_log($formatted, 3, __DIR__ . '/../../logs/app.log');
+        error_log($formatted, 3, ROOT_DIR . '/logs/app.log');
 
     }
 

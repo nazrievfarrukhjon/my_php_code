@@ -5,10 +5,10 @@ use App\Container\Container;
 use App\EntryPoints\Http\WebRequest;
 use App\EntryPoints\Http\HttpUri;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once ROOT_DIR . '/vendor/autoload.php';
 
 /** @var Container $container */
-$container = require __DIR__ . '/../bootstrap/bootstrap.php';
+$container = require ROOT_DIR . '/bootstrap/bootstrap.php';
 
 $logger = $container->get('logger');
 $env = $container->get('env');
