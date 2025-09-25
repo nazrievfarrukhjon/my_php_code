@@ -4,7 +4,6 @@ namespace App\EntryPoints\Http;
 
 use App\Container\Container;
 use App\DB\Contracts\DBConnection;
-use App\Dispatcher;
 use App\Log\LoggerInterface;
 use App\Routing\RoutesRegistration;
 use App\Routing\UrlAssociatedToController;
@@ -30,10 +29,8 @@ readonly class WebRequest
      */
     public function handle(): void
     {
-        // 1
-        $endpoints = (new RoutesRegistration($this->container))->endpoints();
+        $routes = (new RoutesRegistration($this->container))->getRoutes();
 
-        // 2
         $requestParser = new RequestParser(
             $this->httpUri->cleanUri(),
             $this->contentType,
@@ -41,39 +38,30 @@ readonly class WebRequest
             strtoupper(trim($_SERVER['REQUEST_METHOD'] ?? 'GET')),
         );
 
-        $params = $requestParser->parse();
-        $bodyParams = $params['body'];
-        $uriParams = $params['uri'];
+        $parsedParams = $requestParser->parseParams();
+        $bodyParams = $parsedParams['body'];
+        $uriParams = $parsedParams['uri'];
 
+        $request = [
+            'uriParams' => $uriParams,
+            'bodyParams' => $bodyParams,
+            'uriEmbeddedParam' => $this->httpUri->uriEmbeddedParam()
+        ];
 
-        // 3
-        $urlAssociatedToController = new UrlAssociatedToController(
+        $associatedUrlToController = new UrlAssociatedToController(
             $this->httpUri->cleanUri(),
             $this->httpMethod,
-            $endpoints,
+            $routes,
             $this->logger,
         );
-        $cm = $urlAssociatedToController->getControllerWithMethod();
-        $controllerClass = $cm['controller'];
-        $method = $cm['method'];
-
-        // 4
-        $dispatcher = new Dispatcher($this->db, $this->logger);
 
         try {
-            $response = $dispatcher->dispatch(
-                $controllerClass,
-                $method,
-                $uriParams,
-                $bodyParams,
-                $this->httpUri->uriEmbeddedParam()
-            );
+            $response = $associatedUrlToController->handleRequest($request, $this->container);
             echo json_encode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
         }
-
     }
 }

@@ -9,9 +9,9 @@ class RoutesRegistration
 {
     private Container $container;
 
-    private array $endpoints = [
-        WelcomeRoutes::class,
-        BlacklistRoute::class,
+    private array $routeClasses = [
+        WelcomeRoute::class,
+        BlacklistARoute::class,
         WhitelistRoute::class,
     ];
 
@@ -20,17 +20,17 @@ class RoutesRegistration
         $this->container = $container;
     }
 
-    public function endpoints(): array
+    public function getRoutes(): array
     {
         $cache = new FileCache(ROOT_DIR . '/storage/endpoints.php');
 
-        $endpoints = $cache->get('routes', []);
+        $routesFromCache = $cache->get('routes', []);
 
-        if (empty($endpoints)) {
+        if (empty($routesFromCache)) {
             $routes = [];
-            foreach ($this->endpoints as $endpoint) {
-                $ep = new $endpoint($routes);
-                $routes = $ep->endpoints();
+            foreach ($this->routeClasses as $routeClass) {
+                $ep = new $routeClass($routes);
+                $routes = $ep->getRoutes();
             }
 
             $cache->set('routes', $routes);

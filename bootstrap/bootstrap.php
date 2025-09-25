@@ -18,28 +18,32 @@ use App\EntryPoints\Http\HttpUri;
 use App\EntryPoints\Http\WebRequest;
 use App\Env\Env;
 use App\Log\Logger;
+use App\Middlewares\LoggingMiddleware;
 use App\Repositories\WhitelistRepository;
-use App\Routing\BlacklistRoute;
-use App\Routing\WelcomeRoutes;
 use JetBrains\PhpStorm\NoReturn;
 
-#[NoReturn] function dd(...$args): void
+#[NoReturn]
+function dd(...$args): void
 {
-    foreach ($args as $arg) {
-        var_dump($arg);
+    foreach ($args as $index => $arg) {
+        echo "[$index] \n";
+        if (is_array($arg) || is_object($arg)) {
+            print_r($arg);
+        } else {
+            var_dump($arg);
+        }
+        echo "\n";
     }
+
     die(0);
 }
+
 
 $container = new Container();
 
 // Env service
 $container->setFactory('env', function() {
     return new Env(ROOT_DIR . '/.env');
-});
-
-$container->setFactory('logger', function() {
-    return Logger::getInstance();
 });
 
 $container->setFactory('logger', function() {
@@ -66,10 +70,12 @@ $container->setFactory('db', function($c) {
     return $factory->createConnection();
 });
 
-
-
 $container->setFactory('whitelist', function($c) {
     return new WhitelistRepository($c->get('db'));
+});
+
+$container->setFactory(LoggingMiddleware::class, function($c) {
+    return new LoggingMiddleware($c->get('logger'));
 });
 
 $container->setFactory('app', function($c) {
@@ -96,13 +102,17 @@ $container->setFactory('app', function($c) {
 });
 
 
-$container->setFactory(WelcomeRoutes::class, function($c) {
+$container->setFactory(WelcomeController::class, function($c) {
     return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new WelcomeController(
         $uriParams,
+        $bodyParams,
+        $entityMethod,
+        $uriEmbeddedParams,
+        $c->get('db'),
     );
 });
 
-$container->setFactory(BlacklistRoute::class, function($c) {
+$container->setFactory(BlacklistController::class, function($c) {
     return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new BlacklistController(
         $uriParams,
         $bodyParams,

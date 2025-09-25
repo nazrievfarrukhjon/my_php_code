@@ -2,28 +2,36 @@
 
 namespace App\Routing;
 
+use App\Container\Container;
 use App\Log\LoggerInterface;
+use App\Middlewares\MiddlewareDispatcher;
 use Exception;
 
 readonly class UrlAssociatedToController
 {
     public function __construct(
-        private string $httpUri,
-        private string $httpMethod,
-        private array  $endpoints,
+        private string          $httpUri,
+        private string          $httpMethod,
+        private array           $routes,
         private LoggerInterface $logger,
     ) {}
 
     /**
      * @throws Exception
      */
-    private function getController()
+    private function getController(): string
     {
-        if (isset($this->endpoints[$this->httpMethod][$this->httpUri])) {
-            return $this->endpoints[$this->httpMethod][$this->httpUri][0];
+        $this->logger->info('Checking route existence', [
+            'httpMethod' => $this->httpMethod,
+            'httpUri' => $this->httpUri,
+            'routesForMethod' => array_keys($this->routes[$this->httpMethod] ?? [])
+        ]);
+
+        if (isset($this->routes[$this->httpMethod][$this->httpUri])) {
+            return $this->routes[$this->httpMethod][$this->httpUri]['controller'];
         }
 
-        throw new Exception('Endpoint not found');
+        throw new Exception('getController: not found');
     }
 
     /**
@@ -31,35 +39,62 @@ readonly class UrlAssociatedToController
      */
     private function getMethod(): string
     {
-        if (isset($this->endpoints[$this->httpMethod][$this->httpUri])) {
-            return $this->endpoints[$this->httpMethod][$this->httpUri][1];
+        if (isset($this->routes[$this->httpMethod][$this->httpUri])) {
+            return $this->routes[$this->httpMethod][$this->httpUri]['method'];
         }
 
-        throw new Exception('route method not found');
+        throw new Exception('getMethod: not found');
+    }
+
+    private function getMiddleware(): string|array
+    {
+        if (isset($this->routes[$this->httpMethod][$this->httpUri])) {
+            return $this->routes[$this->httpMethod][$this->httpUri]['middlewares'] ?? [];
+        }
+
+        throw new Exception('getMiddleware: not found');
     }
 
     /**
      * @throws Exception
      */
-    public function methodArguments(): array
+    public function getMethodArgs(): array
     {
-        if (isset($this->endpoints[$this->httpMethod][$this->httpUri])) {
-            return $this->endpoints[$this->httpMethod][$this->httpUri][2];
+        if (isset($this->routes[$this->httpMethod][$this->httpUri])) {
+            return $this->routes[$this->httpMethod][$this->httpUri]['args'] ?? [];
         }
 
-        throw new Exception('route not found arguments');
+        throw new Exception('getMethodArgs: not found');
     }
-
 
     /**
      * @throws Exception
      */
-    public function getControllerWithMethod(): array
+    public function handleRequest(array $request, Container $container)
     {
-        return [
-            'controller' => $this->getController(),
-            'method' => $this->getMethod(),
-        ];
+        $controllerClass = $this->getController();
+        $method = $this->getMethod();
+        $middlewares = $this->getMiddleware();
+
+        $middlewareInstances = array_map(fn($mwClass) => $container->get($mwClass), $middlewares);
+
+        $controllerCallable = function($req) use ($controllerClass, $method, $container) {
+
+            $controllerFactory = $container->get($controllerClass);
+
+            $controller = $controllerFactory(
+                $req['uriParams'] ?? [],
+                $req['bodyParams'] ?? [],
+                $method,
+                $req['uriEmbeddedParam'] ?? null
+            );
+
+            return $controller();
+        };
+
+        $dispatcher = new MiddlewareDispatcher($middlewareInstances);
+        return $dispatcher->dispatch($request, $controllerCallable);
     }
+
 
 }

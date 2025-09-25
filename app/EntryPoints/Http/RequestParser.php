@@ -87,7 +87,7 @@ readonly class RequestParser
     /**
      * @throws Exception
      */
-    public function parse(): array
+    public function parseParams(): array
     {
         return [
             'body' => $this->parseBodyParams(),

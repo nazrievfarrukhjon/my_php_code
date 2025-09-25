@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Middlewares;
+
+use App\Log\LoggerInterface;
+
+readonly class LoggingMiddleware implements MiddlewareInterface
+{
+    public function __construct(private LoggerInterface $logger) {}
+
+    public function handle(array $request, callable $next)
+    {
+        $this->logger->info("Incoming request: " . json_encode($request));
+
+        // Call the next middleware/controller
+        $response = $next($request);
+
+        $this->logger->info("Response: " . json_encode($response));
+
+        return $response;
+    }
+}
