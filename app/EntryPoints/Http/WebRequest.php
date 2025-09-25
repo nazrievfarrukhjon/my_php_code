@@ -6,7 +6,7 @@ use App\Container\Container;
 use App\DB\Contracts\DBConnection;
 use App\Log\LoggerInterface;
 use App\Routing\RoutesRegistration;
-use App\Routing\UrlAssociatedToController;
+use App\Routing\HttpHandler;
 use Exception;
 
 readonly class WebRequest
@@ -48,7 +48,7 @@ readonly class WebRequest
             'uriEmbeddedParam' => $this->httpUri->uriEmbeddedParam()
         ];
 
-        $associatedUrlToController = new UrlAssociatedToController(
+        $associatedUrlToController = new HttpHandler(
             $this->httpUri->cleanUri(),
             $this->httpMethod,
             $routes,

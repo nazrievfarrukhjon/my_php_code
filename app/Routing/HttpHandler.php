@@ -7,7 +7,7 @@ use App\Log\LoggerInterface;
 use App\Middlewares\MiddlewareDispatcher;
 use Exception;
 
-readonly class UrlAssociatedToController
+readonly class HttpHandler
 {
     public function __construct(
         private string          $httpUri,

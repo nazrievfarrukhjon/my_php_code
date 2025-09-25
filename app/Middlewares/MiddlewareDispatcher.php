@@ -12,8 +12,7 @@ readonly class MiddlewareDispatcher
     {
         $pipeline = array_reduce(
             array_reverse($this->middlewares),
-            fn($next, MiddlewareInterface $middleware) =>
-            fn($req) => $middleware->handle($req, $next),
+            fn($next, MiddlewareInterface $middleware) => fn($req) => $middleware->handle($req, $next),
             $controller
         );
 

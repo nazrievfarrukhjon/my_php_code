@@ -12,7 +12,6 @@ readonly class LoggingMiddleware implements MiddlewareInterface
     {
         $this->logger->info("Incoming request: " . json_encode($request));
 
-        // Call the next middleware/controller
         $response = $next($request);
 
         $this->logger->info("Response: " . json_encode($response));
