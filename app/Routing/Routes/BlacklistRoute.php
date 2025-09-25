@@ -1,17 +1,20 @@
 <?php
 
-namespace App\Routing;
+namespace App\Routing\Routes;
 
 use App\Controllers\BlacklistController;
+use App\Middlewares\AuthMiddleware;
 use App\Middlewares\LoggingMiddleware;
+use App\Routing\Contracts\ARoute;
 
-class BlacklistARoute extends ARoute
+class BlacklistRoute extends ARoute
 {
 
     public function getRoutes(): array
     {
         $this->add('GET', '/blacklist', BlacklistController::class, 'index', [], [
             LoggingMiddleware::class,
+            AuthMiddleware::class,
         ]);
 
         $this->add('POST', '/blacklist', BlacklistController::class, 'store', [], [

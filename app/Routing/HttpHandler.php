@@ -89,7 +89,7 @@ readonly class HttpHandler
                 $req['uriEmbeddedParam'] ?? null
             );
 
-            return $controller();
+            return $controller->$method();
         };
 
         $dispatcher = new MiddlewareDispatcher($middlewareInstances);

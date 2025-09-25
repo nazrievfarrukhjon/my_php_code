@@ -3,6 +3,7 @@
 use App\App;
 use App\Cache\FileCache;
 use App\Container\Container;
+use App\Controllers\AuthController;
 use App\Controllers\BlacklistController;
 use App\Controllers\WelcomeController;
 use App\Controllers\WhitelistController;
@@ -18,6 +19,7 @@ use App\EntryPoints\Http\HttpUri;
 use App\EntryPoints\Http\WebRequest;
 use App\Env\Env;
 use App\Log\Logger;
+use App\Middlewares\AuthMiddleware;
 use App\Middlewares\LoggingMiddleware;
 use App\Repositories\WhitelistRepository;
 use JetBrains\PhpStorm\NoReturn;
@@ -78,6 +80,10 @@ $container->setFactory(LoggingMiddleware::class, function($c) {
     return new LoggingMiddleware($c->get('logger'));
 });
 
+$container->setFactory(AuthMiddleware::class, function($c) {
+    return new AuthMiddleware($c->get('db'));
+});
+
 $container->setFactory('app', function($c) {
     return new App(
         $c->get('env'),
@@ -124,6 +130,16 @@ $container->setFactory(BlacklistController::class, function($c) {
 
 $container->setFactory(WhitelistController::class, function($c) {
     return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new WhitelistController(
+        $uriParams,
+        $bodyParams,
+        $entityMethod,
+        $uriEmbeddedParams,
+        $c->get('db'),
+    );
+});
+
+$container->setFactory(AuthController::class, function($c) {
+    return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new AuthController(
         $uriParams,
         $bodyParams,
         $entityMethod,

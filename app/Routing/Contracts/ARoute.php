@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Routing;
+namespace App\Routing\Contracts;
 
 
 abstract class ARoute

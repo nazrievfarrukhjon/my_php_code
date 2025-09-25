@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Auth;
+
+use App\DB\Contracts\DBConnection;
+use Exception;
+use PDO;
+
+class TokenAuth implements AuthStrategy {
+    private ?array $user = null;
+
+    public function __construct(private readonly DBConnection $db)
+    {
+    }
+
+    /**
+     * Authenticate user by token.
+     *
+     * @param array $credentials
+     * @return bool
+     * @throws Exception
+     */
+    public function authenticate(array $credentials): bool {
+        if (!isset($credentials['token'])) {
+            throw new Exception("Token is required for authentication");
+        }
+
+        $connection = $this->db->connection();
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $query = "SELECT u.id, u.email 
+                  FROM users u
+                  JOIN user_tokens t ON u.id = t.user_id
+                  WHERE t.token = :token AND t.expires_at > NOW()";
+        $statement = $connection->prepare($query);
+        $statement->bindValue(':token', $credentials['token']);
+        $statement->execute();
+
+        $user = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            $this->user = $user;
+            return true;
+        }
+
+        throw new Exception("Invalid or expired token");
+    }
+
+    /**
+     * Register a token for an existing user.
+     *
+     * @param array $credentials ['user_id' => int]
+     * @return array
+     * @throws Exception
+     */
+    public function register(array $credentials): array
+    {
+        if (!isset($credentials['user_id'])) {
+            throw new Exception("User ID is required to generate token");
+        }
+
+        $connection = $this->db->connection();
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Generate a secure random token
+        $token = bin2hex(random_bytes(32));
+
+        $insert = $connection->prepare("
+            INSERT INTO user_tokens (user_id, token, created_at, expires_at)
+            VALUES (:user_id, :token, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY))
+        ");
+        $insert->bindValue(':user_id', $credentials['user_id']);
+        $insert->bindValue(':token', $token);
+        $insert->execute();
+
+        return [
+            'success' => true,
+            'token' => $token
+        ];
+    }
+
+    public function getUser(): ?array {
+        return $this->user;
+    }
+}

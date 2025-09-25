@@ -4,6 +4,10 @@ namespace App\Routing;
 
 use App\Cache\FileCache;
 use App\Container\Container;
+use App\Routing\Routes\AuthRoute;
+use App\Routing\Routes\BlacklistRoute;
+use App\Routing\Routes\WelcomeRoute;
+use App\Routing\Routes\WhitelistRoute;
 
 class RoutesRegistration
 {
@@ -11,8 +15,9 @@ class RoutesRegistration
 
     private array $routeClasses = [
         WelcomeRoute::class,
-        BlacklistARoute::class,
+        BlacklistRoute::class,
         WhitelistRoute::class,
+        AuthRoute::class,
     ];
 
     public function __construct(Container $container)

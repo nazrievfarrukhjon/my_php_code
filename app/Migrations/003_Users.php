@@ -30,7 +30,8 @@ class Users implements Migration
                     id BIGSERIAL PRIMARY KEY,
                     name VARCHAR(255),
                     email VARCHAR(255),
-                    password VARCHAR(255)
+                    password VARCHAR(255),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             ";
         } elseif ($this->db instanceof SqliteDatabase) {
@@ -39,7 +40,8 @@ class Users implements Migration
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
                     email TEXT,
-                    password TEXT
+                    password TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 );
             ";
         } else {

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Routing;
+namespace App\Routing\Routes;
 
 use App\Controllers\WhitelistController;
+use App\Routing\Contracts\ARoute;
 
 class WhitelistRoute extends ARoute
 {

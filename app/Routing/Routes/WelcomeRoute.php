@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Routing;
+namespace App\Routing\Routes;
 
 
 use App\Controllers\WelcomeController;
+use App\Routing\Contracts\ARoute;
 
 class WelcomeRoute extends ARoute
 {
