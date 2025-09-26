@@ -5,3 +5,8 @@
 /vendor
 /composer.lock
 /conf/*
+/storage/*
+/docker/pgdata_primary
+/docker/pgdata_replica
+logs
+database.sqlite
