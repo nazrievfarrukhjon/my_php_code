@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EntryPoints\Console;
+namespace App\Console;
 
 use Exception;
 

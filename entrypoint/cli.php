@@ -1,10 +1,14 @@
 <?php
 
 use App\App;
-use App\EntryPoints\Console\Console;
-use App\EntryPoints\Console\Commands\ClearCacheCommand;
-use App\EntryPoints\Console\Commands\MigrateCommand;
-use App\EntryPoints\Console\Commands\RollbackCommand;
+use App\Console\Commands\ClearCacheCommand;
+use App\Console\Commands\FakeBlacklistCommand;
+use App\Console\Commands\MigrateCommand;
+use App\Console\Commands\RollbackCommand;
+use App\Console\Console;
+
+$root = __DIR__ . '/../';
+define('ROOT_DIR', $root);
 
 require_once ROOT_DIR . '/vendor/autoload.php';
 $container = require ROOT_DIR . '/bootstrap/bootstrap.php';
@@ -19,6 +23,7 @@ $commands = [
     'migrate' => new MigrateCommand($db, 'migrate'),
     'rollback' => new RollbackCommand($db),
     'cache:clean' => new ClearCacheCommand($routeCache),
+    'fake:blacklist' => new FakeBlacklistCommand($container->get('db')),
 ];
 
 // CLI factory

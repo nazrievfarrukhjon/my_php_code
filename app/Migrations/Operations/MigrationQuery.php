@@ -17,7 +17,7 @@ readonly class MigrationQuery
      */
     public function run(string $method): void
     {
-        $directory = ROUTE_ . '/../../Migrations';
+        $directory = ROOT_DIR . '/app/Migrations';
         $fileNames = scandir($directory);
 
         // filter only files like "123_Blacklists.php"

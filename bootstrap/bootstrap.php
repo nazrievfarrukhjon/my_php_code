@@ -2,6 +2,10 @@
 
 use App\App;
 use App\Cache\FileCache;
+use App\Console\Commands\ClearCacheCommand;
+use App\Console\Commands\MigrateCommand;
+use App\Console\Commands\RollbackCommand;
+use App\Console\Console;
 use App\Container\Container;
 use App\Controllers\AuthController;
 use App\Controllers\BlacklistController;
@@ -10,14 +14,9 @@ use App\Controllers\WhitelistController;
 use App\DB\DBFactories\MysqlFactory;
 use App\DB\DBFactories\PostgresFactory;
 use App\DB\DBFactories\SqliteFactory;
-use App\EntryPoints\Console\Commands\ClearCacheCommand;
-use App\EntryPoints\Console\Commands\MigrateCommand;
-use App\EntryPoints\Console\Commands\RollbackCommand;
-use App\EntryPoints\Console\Console;
-use App\EntryPoints\Console\ConsoleWithResponse;
-use App\EntryPoints\Http\HttpUri;
-use App\EntryPoints\Http\WebRequest;
 use App\Env\Env;
+use App\Http\HttpUri;
+use App\Http\WebRequest;
 use App\Log\Logger;
 use App\Middlewares\AuthMiddleware;
 use App\Middlewares\LoggingMiddleware;
@@ -97,13 +96,11 @@ $container->setFactory('app', function($c) {
             $c->get('logger'),
             $c,
         ),
-        fn($argv) => new ConsoleWithResponse(
-            new Console([
+        fn($argv) => new Console([
                     'migrate' => new MigrateCommand($c->get('db'), 'migrate'),
                     'rollback' => new RollbackCommand($c->get('db')),
                     'cache:clean' => new ClearCacheCommand($c->get('route_cache')),
                 ])
-        ),
     );
 });
 
