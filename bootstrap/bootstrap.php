@@ -51,12 +51,15 @@ $container->setFactory('logger', function() {
     return Logger::getInstance();
 });
 
-$container->setFactory('route_cache', function() {
-    $routeCacheDir = ROOT_DIR . '/storage/endpoints.php';
-    if (!is_dir($routeCacheDir)) {
-        mkdir($routeCacheDir, 0755, true);
-    }
-    return new FileCache($routeCacheDir);
+$dir = ROOT_DIR . '/storage';
+$file = $dir . '/endpoints.php';
+
+if (!is_dir($dir)) {
+    mkdir($dir, 0755, true);
+}
+
+$container->setFactory('route_cache', function() use ($file) {
+    return new FileCache($file);
 });
 
 $container->setFactory('db', function($c) {
