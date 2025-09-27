@@ -8,6 +8,12 @@ use App\DB\Contracts\DBConnection;
 use App\Migrations\Operations\Migration;
 use PDO;
 
+/**
+ * # CREATE EXTENSION IF NOT EXISTS pg_trgm;
+ * # CREATE INDEX blacklists_name_trgm_idx
+ * # ON blacklists
+ * # USING GIN (name gin_trgm_ops);
+ */
 readonly class Blacklists implements Migration
 {
     public function __construct(

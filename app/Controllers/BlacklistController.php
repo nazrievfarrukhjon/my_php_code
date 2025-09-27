@@ -2,35 +2,36 @@
 
 namespace App\Controllers;
 
- use App\DB\Contracts\DBConnection;
- use App\Repositories\BlacklistRepository;
- use Exception;
+use App\DB\Contracts\DBConnection;
+use App\Repositories\BlacklistRepository;
+use Exception;
 
- readonly class BlacklistController implements ControllerInterface
+readonly class BlacklistController implements ControllerInterface
 {
-     private string $entityMethod;
-     private DBConnection $db;
-     private int $uriEmbeddedParam;
-     private array $bodyParams;
+    private string $entityMethod;
+    private DBConnection $db;
+    private int $uriEmbeddedParam;
+    private array $bodyParams;
 
-     private BlacklistRepository $repository;
+    private BlacklistRepository $repository;
 
-     /**
-      * @throws Exception
-      */
-     public function __construct(
-         array $uriParams,
-         array $bodyParams,
-         string $entityMethod,
-         int $uriEmbeddedParam,
-         DBConnection $db
-     ) {
-         $this->entityMethod = $entityMethod;
-         $this->db = $db;
-         $this->uriEmbeddedParam = $uriEmbeddedParam;
-         $this->bodyParams = $bodyParams;
-         $this->repository = new BlacklistRepository($this->db);
-     }
+    /**
+     * @throws Exception
+     */
+    public function __construct(
+        array        $uriParams,
+        array        $bodyParams,
+        string       $entityMethod,
+        int          $uriEmbeddedParam,
+        DBConnection $db
+    )
+    {
+        $this->entityMethod = $entityMethod;
+        $this->db = $db;
+        $this->uriEmbeddedParam = $uriEmbeddedParam;
+        $this->bodyParams = $bodyParams;
+        $this->repository = new BlacklistRepository($this->db);
+    }
 
     public function __invoke()
     {
@@ -38,41 +39,49 @@ namespace App\Controllers;
 
     }
 
-     /**
-      * @throws Exception
-      */
-     public function index(): array
+    /**
+     * @throws Exception
+     */
+    public function index(): array
     {
         return $this->repository->all();
     }
 
-     /**
-      * @throws Exception
-      */
-     public function store(): string
-     {
-         $this->repository->store($this->bodyParams);
+    /**
+     * @throws Exception
+     */
+    public function store(): string
+    {
+        $this->repository->store($this->bodyParams);
 
         return 'stored!';
     }
 
-     /**
-      * @throws Exception
-      */
-     public function update(): string
+    /**
+     * @throws Exception
+     */
+    public function update(): string
     {
         $this->repository->update($this->uriEmbeddedParam, $this->bodyParams);
 
         return 'updated!';
     }
 
-     /**
-      * @throws Exception
-      */
-     public function delete(): string
+    /**
+     * @throws Exception
+     */
+    public function delete(): string
     {
         $this->repository->delete($this->uriEmbeddedParam);
 
         return 'deleted';
+    }
+
+    public function searchByName(): array
+    {
+        $name = $this->bodyParams['name'];
+        $birthDate = $this->bodyParams['birthdate'];
+
+        return $this->repository->searchByName($name, $birthDate);
     }
 }

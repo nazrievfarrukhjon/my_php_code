@@ -96,4 +96,37 @@ readonly class BlacklistRepository
         }
     }
 
+    public function searchByName(string $name, ?string $birthdate = null): array
+    {
+        try {
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            if ($birthdate) {
+                $year = (int)substr($birthdate, 0, 4);
+                $startDecade = $year - ($year % 10);
+                $endDecade = $startDecade + 9;
+                $table = "blacklists_{$startDecade}_{$endDecade}";
+            } else {
+                $table = "blacklists";
+            }
+
+            $query = "
+            SELECT first_name,
+                   similarity(first_name, :name) AS sim
+            FROM {$table}
+            WHERE first_name % :name
+            ORDER BY sim DESC
+            LIMIT 10
+        ";
+
+            $stmt = $this->connection->prepare($query);
+            $stmt->execute(['name' => $name]);
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (Exception $e) {
+            return ["Connection failed: " . $e->getMessage()];
+        }
+    }
+
 }
