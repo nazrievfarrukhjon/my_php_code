@@ -70,11 +70,21 @@ readonly class FileCache implements CacheInterface
 
     private function readFile(): array
     {
-        if (file_exists($this->file)) {
-            return include $this->file;
+        if (!file_exists($this->file)) {
+            return [];
         }
-        return [];
+
+        $data = include $this->file;
+
+        if (!is_array($data)) {
+            // Clear corrupted file
+            $this->writeFile([]);
+            return [];
+        }
+
+        return $data;
     }
+
 
     private function writeFile(array $data): bool
     {

@@ -29,10 +29,9 @@ class RoutesRegistration
     {
         $cache = new FileCache(ROOT_DIR . '/storage/endpoints.php');
 
-        $routesFromCache = $cache->get('routes', []);
+        $routes = $cache->get('routes', []);
 
-        if (empty($routesFromCache)) {
-            $routes = [];
+        if (empty($routes)) {
             foreach ($this->routeClasses as $routeClass) {
                 $ep = new $routeClass($routes);
                 $routes = $ep->getRoutes();
@@ -41,7 +40,7 @@ class RoutesRegistration
             $cache->set('routes', $routes);
         }
 
-
-        return $cache->get('routes', []);
+        return $routes;
     }
+
 }

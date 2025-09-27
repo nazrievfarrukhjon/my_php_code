@@ -6,7 +6,6 @@ use App\Auth\Auth;
 use App\Auth\EmailAuth;
 use App\Auth\TokenAuth;
 use App\DB\Contracts\DBConnection;
-use App\Repositories\WhitelistRepository;
 use Exception;
 
 class AuthController implements ControllerInterface
@@ -15,8 +14,6 @@ class AuthController implements ControllerInterface
     private DBConnection $db;
     private int $uriEmbeddedParam;
     private array $bodyParams;
-
-    private WhitelistRepository $repo;
 
     /**
      * @throws Exception
@@ -42,7 +39,7 @@ class AuthController implements ControllerInterface
     public function login(): void
     {
         $request = $this->bodyParams;
-        $auth = Auth::getInstance($this->db);
+        $auth = Auth::getInstance();
 
         if (isset($request['email'])) {
             $auth->setStrategy(new EmailAuth($this->db));

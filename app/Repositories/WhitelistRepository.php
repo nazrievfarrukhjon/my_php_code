@@ -16,9 +16,9 @@ readonly class WhitelistRepository
     /**
      * @throws Exception
      */
-    public function __construct(private DBConnection $myDb)
+    public function __construct(private DBConnection $db)
     {
-        $this->connection = $this->myDb->connection();
+        $this->connection = $this->db->connection();
     }
 
     public function all(): array

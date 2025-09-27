@@ -78,6 +78,12 @@ $container->setFactory('whitelist', function($c) {
     return new WhitelistRepository($c->get('db'));
 });
 
+$dir = ROOT_DIR . '/logs';
+$file = $dir . '/app.log';
+
+if (!is_dir($dir)) {
+    mkdir($dir, 0755, true);
+}
 $container->setFactory(LoggingMiddleware::class, function($c) {
     return new LoggingMiddleware($c->get('logger'));
 });

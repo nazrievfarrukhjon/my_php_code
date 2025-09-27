@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\DB\Contracts\DBConnection;
-use App\Repositories\BlacklistRepository;
 use Exception;
 
 class WelcomeController implements ControllerInterface
@@ -12,8 +11,6 @@ class WelcomeController implements ControllerInterface
     private DBConnection $db;
     private int $uriEmbeddedParam;
     private array $bodyParams;
-
-    private BlacklistRepository $repository;
 
     /**
      * @throws Exception
@@ -29,7 +26,6 @@ class WelcomeController implements ControllerInterface
         $this->db = $db;
         $this->uriEmbeddedParam = $uriEmbeddedParam;
         $this->bodyParams = $bodyParams;
-        $this->repository = new BlacklistRepository($this->db);
     }
 
     public function __invoke()

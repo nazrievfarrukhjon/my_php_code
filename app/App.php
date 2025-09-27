@@ -21,8 +21,8 @@ readonly class App
     function handleHttp(): void
     {
         $method = strtoupper(trim($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+        $contentType = !empty($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : 'application/json';
         $allowed = ['application/json', 'multipart/form-data', 'application/x-www-form-urlencoded'];
-        $contentType = $_SERVER['CONTENT_TYPE'] ?? 'application/json';
         if (!in_array($contentType, $allowed, true)) {
             throw new Exception("Unsupported Content-Type: $contentType");
         }
