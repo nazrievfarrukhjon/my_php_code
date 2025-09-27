@@ -45,7 +45,7 @@ readonly class App
     function handleCli(array $argv): int
     {
         $cliHandler = ($this->cliFactory)($argv);
-        $response = $cliHandler->response();
+        $response = $cliHandler->handle($argv[1]??'');
 
         echo "$response\n";
         return 0;

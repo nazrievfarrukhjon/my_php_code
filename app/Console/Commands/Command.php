@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EntryPoints\Console\Commands;
+namespace App\Console\Commands;
 
 interface Command {
     public function execute(): void;

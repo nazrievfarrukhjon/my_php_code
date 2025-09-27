@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EntryPoints\Http;
+namespace App\Http;
 
 use Exception;
 

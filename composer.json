@@ -13,7 +13,10 @@
     ],
     "require": {
       "ext-pdo": "*",
-        "promphp/prometheus_client_php": "^2.14"
+        "promphp/prometheus_client_php": "^2.14",
+        "ext-mbstring": "*",
+        "fakerphp/faker": "^1.24",
+        "ext-pgsql": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5"

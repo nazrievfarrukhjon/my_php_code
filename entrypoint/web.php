@@ -2,8 +2,8 @@
 
 use App\App;
 use App\Container\Container;
-use App\EntryPoints\Http\WebRequest;
-use App\EntryPoints\Http\HttpUri;
+use App\Http\HttpUri;
+use App\Http\WebRequest;
 
 require_once ROOT_DIR . '/vendor/autoload.php';
 
