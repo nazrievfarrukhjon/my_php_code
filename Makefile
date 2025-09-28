@@ -13,9 +13,3 @@ down:
 args ?=
 cli:
 	docker-compose run --rm php1 php ./entrypoint/cli.php $(args)
-
-
-# CREATE EXTENSION IF NOT EXISTS pg_trgm;
-# CREATE INDEX blacklists_name_trgm_idx
-# ON blacklists
-# USING GIN (name gin_trgm_ops);
