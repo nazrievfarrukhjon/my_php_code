@@ -15,7 +15,7 @@ $container = require ROOT_DIR . '/bootstrap/bootstrap.php';
 
 $env = $container->get('env');
 $logger = $container->get('logger');
-$db = $container->get('db');
+$db = $container->get('primary_db');
 $routeCache = $container->get('route_cache');
 
 // Register commands
@@ -23,7 +23,7 @@ $commands = [
     'migrate' => new MigrateCommand($db, 'migrate'),
     'rollback' => new RollbackCommand($db),
     'cache:clean' => new ClearCacheCommand($routeCache),
-    'fake:blacklist' => new FakeBlacklistCommand($container->get('db')),
+    'fake:blacklist' => new FakeBlacklistCommand($container->get('primary_db')),
 ];
 
 // CLI factory
