@@ -62,12 +62,24 @@ $container->setFactory('route_cache', function() use ($file) {
     return new FileCache($file);
 });
 
-$container->setFactory('db', function($c) {
+$container->setFactory('primary_db', function($c) {
     $env = $c->get('env');
     $connection = $env->get('DB_CONNECTION');
     $factory = match($connection) {
         'mysql'  => new MysqlFactory($env),
-        'pgsql'  => new PostgresFactory($env),
+        'pgsql'  => new PostgresFactory($env, 'primary'),
+        'sqlite' => new SqliteFactory($env),
+        default  => throw new RuntimeException("Unsupported DB_CONNECTION: $connection"),
+    };
+    return $factory->createConnection();
+});
+
+$container->setFactory('replica_db', function($c) {
+    $env = $c->get('env');
+    $connection = $env->get('DB_CONNECTION');
+    $factory = match($connection) {
+        'mysql'  => new MysqlFactory($env),
+        'pgsql'  => new PostgresFactory($env, 'replica'),
         'sqlite' => new SqliteFactory($env),
         default  => throw new RuntimeException("Unsupported DB_CONNECTION: $connection"),
     };
@@ -75,7 +87,7 @@ $container->setFactory('db', function($c) {
 });
 
 $container->setFactory('whitelist', function($c) {
-    return new WhitelistRepository($c->get('db'));
+    return new WhitelistRepository($c->get('primary_db'));
 });
 
 $dir = ROOT_DIR . '/logs';
@@ -89,7 +101,7 @@ $container->setFactory(LoggingMiddleware::class, function($c) {
 });
 
 $container->setFactory(AuthMiddleware::class, function($c) {
-    return new AuthMiddleware($c->get('db'));
+    return new AuthMiddleware($c->get('primary_db'));
 });
 
 $container->setFactory('app', function($c) {
@@ -101,13 +113,13 @@ $container->setFactory('app', function($c) {
             $method,
             $contentType,
             $data,
-            $c->get('db'),
+            $c->get('primary_db'),
             $c->get('logger'),
             $c,
         ),
         fn($argv) => new Console([
-                    'migrate' => new MigrateCommand($c->get('db'), 'migrate'),
-                    'rollback' => new RollbackCommand($c->get('db')),
+                    'migrate' => new MigrateCommand($c->get('primary_db'), 'migrate'),
+                    'rollback' => new RollbackCommand($c->get('primary_db')),
                     'cache:clean' => new ClearCacheCommand($c->get('route_cache')),
                 ])
     );
@@ -120,7 +132,7 @@ $container->setFactory(WelcomeController::class, function($c) {
         $bodyParams,
         $entityMethod,
         $uriEmbeddedParams,
-        $c->get('db'),
+        $c->get('primary_db'),
     );
 });
 
@@ -130,7 +142,8 @@ $container->setFactory(BlacklistController::class, function($c) {
         $bodyParams,
         $entityMethod,
         $uriEmbeddedParams,
-        $c->get('db'),
+        $c->get('primary_db'),
+        $c->get('replica_db'),
     );
 });
 
@@ -140,7 +153,7 @@ $container->setFactory(WhitelistController::class, function($c) {
         $bodyParams,
         $entityMethod,
         $uriEmbeddedParams,
-        $c->get('db'),
+        $c->get('primary_db'),
     );
 });
 
@@ -150,7 +163,8 @@ $container->setFactory(AuthController::class, function($c) {
         $bodyParams,
         $entityMethod,
         $uriEmbeddedParams,
-        $c->get('db'),
+        $c->get('primary_db'),
+        $c->get('replica_db'),
     );
 });
 

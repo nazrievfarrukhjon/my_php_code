@@ -10,23 +10,20 @@ use PDOException;
 
 readonly class BlacklistRepository
 {
+    public function __construct(
+        private DBConnection $primary,
+        private DBConnection $replica
+    ) {
 
-    private PDO $connection;
-
-    /**
-     * @throws Exception
-     */
-    public function __construct(DBConnection $db)
-    {
-        $this->connection = $db->connection();
     }
 
     public function all(): array
     {
         try {
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo = $this->replica->connection();
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $query = "SELECT * FROM blacklists";
-            $statement = $this->connection->prepare($query);
+            $statement = $pdo->prepare($query);
             $statement->execute();
 
             return $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -40,13 +37,14 @@ readonly class BlacklistRepository
         try {
             (new BlacklistStoreValidation($params))->check();
 
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo = $this->primary->connection();
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Construct the INSERT query
             $query = "INSERT INTO blacklists (first_name, second_name, third_name, fourth_name, type, birth_date) VALUES (?, ?, ?, ?, ?, ?)";
 
             // Prepare the statement
-            $statement = $this->connection->prepare($query);
+            $statement = $pdo->prepare($query);
 
             // Execute the statement with parameters
             $statement->execute([$params['first_name'], $params['second_name'], $params['third_name'], $params['fourth_name'], $params['type'], $params['birth_date']]);
@@ -61,13 +59,15 @@ readonly class BlacklistRepository
     public function delete(int $id): array
     {
         try {
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo = $this->primary->connection();
+
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Construct the DELETE query
             $query = "DELETE FROM blacklists WHERE id = ?";
 
             // Prepare the statement
-            $statement = $this->connection->prepare($query);
+            $statement = $pdo->prepare($query);
 
             // Execute the statement with parameter
             $statement->execute([$id]);
@@ -82,11 +82,13 @@ readonly class BlacklistRepository
     public function update(int $id, array $params): array
     {
         try {
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo = $this->primary->connection();
+
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $query = "UPDATE blacklists SET first_name = ?, second_name = ?, third_name = ?, fourth_name = ?, type = ?, birth_date = ? WHERE id = ?";
 
-            $statement = $this->connection->prepare($query);
+            $statement = $pdo->prepare($query);
 
             $statement->execute([$params['first_name'], $params['second_name'], $params['third_name'], $params['fourth_name'], $params['type'], $params['birth_date'], $id]);
 
@@ -99,7 +101,8 @@ readonly class BlacklistRepository
     public function searchByName(string $name, ?string $birthdate = null): array
     {
         try {
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo = $this->replica->connection();
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             if ($birthdate) {
                 $year = (int)substr($birthdate, 0, 4);
@@ -119,7 +122,7 @@ readonly class BlacklistRepository
             LIMIT 10
         ";
 
-            $stmt = $this->connection->prepare($query);
+            $stmt = $pdo->prepare($query);
             $stmt->execute(['name' => $name]);
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

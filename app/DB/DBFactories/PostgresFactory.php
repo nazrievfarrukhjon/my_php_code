@@ -11,12 +11,23 @@ use App\Env\Env;
 
 final readonly class PostgresFactory implements DBAbstractFactory
 {
-    public function __construct(private Env $env) {}
+    public function __construct(private Env $env, private string $role = 'primary') {}
 
     public function createConnection(): DBConnection
     {
+        if ($this->role === 'primary') {
+            $host = $this->env->get('DB_HOST_PRIMARY');
+            $port = $this->env->get('DB_PORT_PRIMARY');
+        } else {
+            $host = $this->env->get('DB_HOST_REPLICA');
+            $port = $this->env->get('DB_PORT_REPLICA');
+        }
+
+        $dsn = "pgsql:host={$host};port={$port};dbname={$this->env->get('DB_NAME')}";
+
+
         return new PostgresDatabase(
-            "pgsql:host={$this->env->get('DB_HOST')};dbname={$this->env->get('DB_NAME')}",
+            $dsn,
             $this->env->get('DB_USER'),
             $this->env->get('DB_PASS')
         );

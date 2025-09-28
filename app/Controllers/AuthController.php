@@ -12,6 +12,9 @@ class AuthController implements ControllerInterface
 {
     private string $entityMethod;
     private DBConnection $db;
+
+    private DBConnection $replicaDB;
+
     private int $uriEmbeddedParam;
     private array $bodyParams;
 
@@ -24,11 +27,13 @@ class AuthController implements ControllerInterface
         string                     $entityMethod,
         int                        $uriEmbeddedParam,
         DBConnection $db,
+        DBConnection $replicatDB,
     ) {
         $this->entityMethod = $entityMethod;
         $this->uriEmbeddedParam = $uriEmbeddedParam;
         $this->bodyParams = $bodyParams;
         $this->db = $db;
+        $this->replicaDB = $replicatDB;
     }
 
     public function __invoke()

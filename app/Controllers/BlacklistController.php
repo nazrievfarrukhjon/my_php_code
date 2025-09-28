@@ -9,7 +9,9 @@ use Exception;
 readonly class BlacklistController implements ControllerInterface
 {
     private string $entityMethod;
-    private DBConnection $db;
+    private DBConnection $primaryDB;
+    private DBConnection $replicaDB;
+
     private int $uriEmbeddedParam;
     private array $bodyParams;
 
@@ -23,14 +25,16 @@ readonly class BlacklistController implements ControllerInterface
         array        $bodyParams,
         string       $entityMethod,
         int          $uriEmbeddedParam,
-        DBConnection $db
+        DBConnection $primaryDB,
+        DBConnection $replicaDB,
     )
     {
         $this->entityMethod = $entityMethod;
-        $this->db = $db;
+        $this->primaryDB = $primaryDB;
+        $this->replicaDB = $replicaDB;
         $this->uriEmbeddedParam = $uriEmbeddedParam;
         $this->bodyParams = $bodyParams;
-        $this->repository = new BlacklistRepository($this->db);
+        $this->repository = new BlacklistRepository($this->primaryDB, $this->replicaDB);
     }
 
     public function __invoke()
