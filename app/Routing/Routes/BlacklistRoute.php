@@ -32,13 +32,10 @@ class BlacklistRoute extends ARoute
             //\App\Middlewares\AuthMiddleware::class,
         ]);
 
-        $this->add('POST', '/search', BlacklistController::class, 'searchByName', [], [
+        $this->add('POST', '/blacklist/search', BlacklistController::class, 'searchByName', [], [
             LoggingMiddleware::class,
-            //\App\Middlewares\AuthMiddleware::class,
+            AuthMiddleware::class,
         ]);
-
-
-
 
         return $this->routesContainer;
     }

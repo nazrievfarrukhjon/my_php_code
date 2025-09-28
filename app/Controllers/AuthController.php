@@ -5,35 +5,40 @@ namespace App\Controllers;
 use App\Auth\Auth;
 use App\Auth\EmailAuth;
 use App\Auth\TokenAuth;
+use App\Cache\CacheInterface;
 use App\DB\Contracts\DBConnection;
 use Exception;
 
 class AuthController implements ControllerInterface
 {
     private string $entityMethod;
-    private DBConnection $db;
+    private DBConnection $primaryDB;
 
     private DBConnection $replicaDB;
 
     private int $uriEmbeddedParam;
     private array $bodyParams;
 
+    private CacheInterface $cache;
+
     /**
      * @throws Exception
      */
     public function __construct(
-        array                      $uriParams,
-        array                      $bodyParams,
-        string                     $entityMethod,
-        int                        $uriEmbeddedParam,
-        DBConnection $db,
-        DBConnection $replicatDB,
+        array          $uriParams,
+        array          $bodyParams,
+        string         $entityMethod,
+        int            $uriEmbeddedParam,
+        DBConnection   $primaryDB,
+        DBConnection   $replicaDB,
+        CacheInterface $cache,
     ) {
         $this->entityMethod = $entityMethod;
         $this->uriEmbeddedParam = $uriEmbeddedParam;
         $this->bodyParams = $bodyParams;
-        $this->db = $db;
-        $this->replicaDB = $replicatDB;
+        $this->primaryDB = $primaryDB;
+        $this->replicaDB = $replicaDB;
+        $this->cache = $cache;
     }
 
     public function __invoke()
@@ -44,17 +49,17 @@ class AuthController implements ControllerInterface
     public function login(): void
     {
         $request = $this->bodyParams;
-        $auth = Auth::getInstance();
+        $auth = Auth::getInstance($this->cache);
 
         if (isset($request['email'])) {
-            $auth->setStrategy(new EmailAuth($this->db));
+            $auth->setStrategy(new EmailAuth($this->primaryDB, $this->cache));
         } elseif (isset($request['token'])) {
-            $auth->setStrategy(new TokenAuth($this->db));
+            $auth->setStrategy(new TokenAuth($this->primaryDB, $this->cache));
         }
 
         try {
-            $auth->login($request);
-            echo json_encode(['success' => true, 'user' => $auth->user()]);
+            $token = $auth->login($request);
+            echo json_encode(['success' => true, 'user' => $auth->user(), 'token' => $token]);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
@@ -71,7 +76,7 @@ class AuthController implements ControllerInterface
 
             //
             $auth = Auth::getInstance();
-            $auth->setStrategy(new EmailAuth($this->db));
+            $auth->setStrategy(new EmailAuth($this->primaryDB));
             $result = $auth->register($request);
             echo json_encode(['success' => true, 'user' => $auth->user(), 'result' => $result]);
         } catch (Exception $e) {

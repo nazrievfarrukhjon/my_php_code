@@ -2,6 +2,7 @@
 
 namespace App\Auth;
 
+use App\Cache\CacheInterface;
 use App\DB\Contracts\DBConnection;
 use Exception;
 use PDO;
@@ -9,7 +10,7 @@ use PDO;
 class EmailAuth implements AuthStrategy {
     private ?array $user = null;
 
-    public function __construct(private readonly DBConnection $db)
+    public function __construct(private readonly DBConnection $db, private CacheInterface $cache)
     {
     }
 

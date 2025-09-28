@@ -2,6 +2,7 @@
 
 use App\App;
 use App\Cache\FileCache;
+use App\Cache\RedisCache;
 use App\Console\Commands\ClearCacheCommand;
 use App\Console\Commands\MigrateCommand;
 use App\Console\Commands\RollbackCommand;
@@ -62,6 +63,11 @@ $container->setFactory('route_cache', function() use ($file) {
     return new FileCache($file);
 });
 
+$container->setFactory('redis_cache', function($c) use ($file) {
+    $env = $c->get('env');
+    return new RedisCache($env->get('REDIS_HOST'), $env->get('REDIS_PORT'));
+});
+
 $container->setFactory('primary_db', function($c) {
     $env = $c->get('env');
     $connection = $env->get('DB_CONNECTION');
@@ -101,7 +107,7 @@ $container->setFactory(LoggingMiddleware::class, function($c) {
 });
 
 $container->setFactory(AuthMiddleware::class, function($c) {
-    return new AuthMiddleware($c->get('primary_db'));
+    return new AuthMiddleware($c->get('primary_db'), $c->get('redis_cache'));
 });
 
 $container->setFactory('app', function($c) {
@@ -165,6 +171,7 @@ $container->setFactory(AuthController::class, function($c) {
         $uriEmbeddedParams,
         $c->get('primary_db'),
         $c->get('replica_db'),
+        $c->get('redis_cache'),
     );
 });
 

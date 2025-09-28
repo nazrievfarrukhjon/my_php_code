@@ -84,7 +84,7 @@ readonly class BlacklistController implements ControllerInterface
     public function searchByName(): array
     {
         $name = $this->bodyParams['name'];
-        $birthDate = $this->bodyParams['birthdate'];
+        $birthDate = $this->bodyParams['birthdate']?? null;
 
         return $this->repository->searchByName($name, $birthDate);
     }

@@ -57,6 +57,34 @@ readonly class Blacklists implements Migration
                 $conn->exec($partitionSql);
             }
 
+            //
+
+            $names = ['first_name'];
+            for ($year = 1950; $year <= 2030; $year += 10) {
+                $partitionName = "blacklists_" . $year . "_" . ($year + 9);
+                foreach ($names as $col) {
+                    $indexName = "{$partitionName}_{$col}_trgm_idx";
+                    $indexSql = "
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1
+                    FROM pg_class c
+                    JOIN pg_namespace n ON n.oid = c.relnamespace
+                    WHERE c.relname = '{$indexName}'
+                ) THEN
+                    CREATE INDEX {$indexName}
+                    ON {$partitionName}
+                    USING GIN ({$col} gin_trgm_ops);
+                END IF;
+            END
+            $$;
+        ";
+                    $conn->exec($indexSql);
+                }
+            }
+
+
         } elseif ($this->db instanceof SqliteDatabase) {
             $sql = '
                 CREATE TABLE IF NOT EXISTS blacklists (
