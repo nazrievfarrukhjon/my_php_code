@@ -4,9 +4,7 @@ namespace App\Migrations;
 
 use App\DB\ConcreteImplementations\ConcreteDB\PostgresDatabase;
 use App\DB\ConcreteImplementations\ConcreteDB\SqliteDatabase;
-use App\DB\Contracts\DBConnection;
-use App\Migrations\Operations\Migration;
-use PDO;
+use App\Migrations\Operations\BaseMigration;
 
 /**
  * # CREATE EXTENSION IF NOT EXISTS pg_trgm;
@@ -14,19 +12,13 @@ use PDO;
  * # ON blacklists
  * # USING GIN (name gin_trgm_ops);
  */
-readonly class Blacklists implements Migration
+class Blacklists extends BaseMigration
 {
-    public function __construct(
-        private DBConnection $db
-    ) {}
-
     /**
      * @throws \Exception
      */
     public function migrate(): void
     {
-        $conn = $this->db->connection();
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         if ($this->db instanceof PostgresDatabase) {
             $sql = "
@@ -41,7 +33,7 @@ readonly class Blacklists implements Migration
                     PRIMARY KEY (id, birth_date) -- composite PK required
                 ) PARTITION BY RANGE (birth_date);
             ";
-            $conn->exec($sql);
+            $this->connection->exec($sql);
 
             // Create partitions by 10 years (1950–2029 as example)
             for ($year = 1950; $year <= 2030; $year += 10) {
@@ -54,7 +46,7 @@ readonly class Blacklists implements Migration
                     PARTITION OF blacklists
                     FOR VALUES FROM ('$start') TO ('$end');
                 ";
-                $conn->exec($partitionSql);
+                $this->connection->exec($partitionSql);
             }
 
             //
@@ -80,7 +72,7 @@ readonly class Blacklists implements Migration
             END
             $$;
         ";
-                    $conn->exec($indexSql);
+                    $this->connection->exec($indexSql);
                 }
             }
 
@@ -97,7 +89,7 @@ readonly class Blacklists implements Migration
                     birth_date TEXT
                 );
             ';
-            $conn->exec($sql);
+            $this->connection->exec($sql);
 
         } else {
             throw new \Exception("Unsupported DB type");
@@ -106,10 +98,7 @@ readonly class Blacklists implements Migration
 
     public function rollback(): void
     {
-        $conn = $this->db->connection();
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
         $sql = "DROP TABLE IF EXISTS blacklists CASCADE;";
-        $conn->exec($sql);
+        $this->connection->exec($sql);
     }
 }

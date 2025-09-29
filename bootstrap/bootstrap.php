@@ -10,6 +10,7 @@ use App\Console\Console;
 use App\Container\Container;
 use App\Controllers\AuthController;
 use App\Controllers\BlacklistController;
+use App\Controllers\DriverController;
 use App\Controllers\WelcomeController;
 use App\Controllers\WhitelistController;
 use App\DB\DBFactories\MysqlFactory;
@@ -21,6 +22,7 @@ use App\Http\WebRequest;
 use App\Log\Logger;
 use App\Middlewares\AuthMiddleware;
 use App\Middlewares\LoggingMiddleware;
+use App\Repositories\DriverRepository;
 use App\Repositories\WhitelistRepository;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -156,6 +158,15 @@ $container->setFactory(AuthController::class, function($c) {
         $c->get('primary_db'),
         $c->get('replica_db'),
         $c->get('redis_cache'),
+    );
+});
+
+$container->setFactory(DriverController::class, function($c) {
+    return fn() => new DriverController(
+        new DriverRepository(
+            $c->get('primary_db'),
+            $c->get('replica_db'),
+        ),
     );
 });
 

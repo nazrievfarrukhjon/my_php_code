@@ -5,19 +5,14 @@ namespace App\Migrations;
 use App\DB\ConcreteImplementations\ConcreteDB\PostgresDatabase;
 use App\DB\ConcreteImplementations\ConcreteDB\SqliteDatabase;
 use App\DB\Contracts\DBConnection;
-use App\Migrations\Operations\Migration;
+use App\Migrations\Operations\BaseMigration;
 use Exception;
 use PDO;
 
-class OAuthClients implements Migration
+class OAuthClients extends BaseMigration
 {
-    public function __construct(private DBConnection $db) {}
-
     public function migrate(): void
     {
-        $connection = $this->db->connection();
-        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
         if ($this->db instanceof PostgresDatabase) {
             $sql = "
                 CREATE TABLE IF NOT EXISTS oauth_clients (
@@ -40,13 +35,11 @@ class OAuthClients implements Migration
             throw new Exception("Unsupported DB type");
         }
 
-        $connection->exec($sql);
+        $this->connection->exec($sql);
     }
 
     public function rollback(): void
     {
-        $connection = $this->db->connection();
-        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $connection->exec("DROP TABLE IF EXISTS oauth_clients;");
+        $this->connection->exec("DROP TABLE IF EXISTS oauth_clients;");
     }
 }

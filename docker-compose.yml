@@ -39,7 +39,7 @@ services:
   ########################### PostgreSQL ###########
   pg_primary:
       container_name: pg_primary
-      image: postgres:17.4
+      image: postgis/postgis:16-3.4
       environment:
         POSTGRES_USER: root
         POSTGRES_PASSWORD: root
@@ -57,7 +57,7 @@ services:
 
   pg_replica:
       container_name: pg_replica
-      image: postgres:17.4
+      image: postgis/postgis:16-3.4
       environment:
         POSTGRES_USER: root
         POSTGRES_PASSWORD: root

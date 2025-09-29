@@ -6,6 +6,7 @@ use App\Cache\FileCache;
 use App\Container\Container;
 use App\Routing\Routes\AuthRoute;
 use App\Routing\Routes\BlacklistRoute;
+use App\Routing\Routes\DriverRoute;
 use App\Routing\Routes\WelcomeRoute;
 use App\Routing\Routes\WhitelistRoute;
 
@@ -18,6 +19,7 @@ class RoutesRegistration
         BlacklistRoute::class,
         WhitelistRoute::class,
         AuthRoute::class,
+        DriverRoute::class,
     ];
 
     public function __construct(Container $container)
