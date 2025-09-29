@@ -9,17 +9,13 @@ use App\Auth\JWTAuthStrategy;
 use App\Auth\TokenAuth;
 use App\Cache\CacheInterface;
 use App\DB\Contracts\DBConnection;
+use App\Http\RequestDTO;
 use Exception;
 
 class AuthController implements ControllerInterface
 {
-    private string $entityMethod;
     private DBConnection $primaryDB;
-
     private DBConnection $replicaDB;
-
-    private int $uriEmbeddedParam;
-    private array $bodyParams;
 
     private CacheInterface $cache;
     private JWT $jwt;
@@ -29,35 +25,20 @@ class AuthController implements ControllerInterface
      * @throws Exception
      */
     public function __construct(
-        array          $uriParams,
-        array          $bodyParams,
-        string         $entityMethod,
-        int            $uriEmbeddedParam,
         DBConnection   $primaryDB,
         DBConnection   $replicaDB,
         CacheInterface $cache,
     ) {
-        $this->entityMethod = $entityMethod;
-        $this->uriEmbeddedParam = $uriEmbeddedParam;
-        $this->bodyParams = $bodyParams;
         $this->primaryDB = $primaryDB;
         $this->replicaDB = $replicaDB;
         $this->cache = $cache;
-
         $this->jwt = new JWT('your_secret_here', 'HS256', 3600);
         $this->auth = new Auth($cache);
     }
 
-
-
-    public function __invoke()
+    public function login(RequestDTO $requestDTO): void
     {
-        // TODO: Implement __invoke() method.
-    }
-
-    public function login(): void
-    {
-        $request = $this->bodyParams;
+        $request = $requestDTO->bodyParams;
 
         if (isset($request['email'])) {
             $this->auth->setStrategy(new JWTAuthStrategy($this->primaryDB, $this->cache, $this->jwt));
@@ -80,9 +61,9 @@ class AuthController implements ControllerInterface
         }
     }
 
-    public function register(): void
+    public function register(RequestDTO $requestDTO): void
     {
-        $request = $this->bodyParams;
+        $request = $requestDTO->bodyParams;
 
         if (empty($request['email']) || empty($request['password'])) {
             echo json_encode(['success' => false, 'error' => 'Email and password are required']);

@@ -3,46 +3,31 @@
 namespace App\Controllers;
 
 use App\DB\Contracts\DBConnection;
+use App\Http\RequestDTO;
 use Exception;
 
 class WelcomeController implements ControllerInterface
 {
-    private string $entityMethod;
     private DBConnection $db;
-    private int $uriEmbeddedParam;
-    private array $bodyParams;
 
     /**
      * @throws Exception
      */
     public function __construct(
-        array $uriParams,
-        array $bodyParams,
-        string $entityMethod,
-        int $uriEmbeddedParam,
         DBConnection $db
     ) {
-        $this->entityMethod = $entityMethod;
         $this->db = $db;
-        $this->uriEmbeddedParam = $uriEmbeddedParam;
-        $this->bodyParams = $bodyParams;
-    }
-
-    public function __invoke()
-    {
-        return call_user_func([$this, $this->entityMethod]);
-
     }
 
     /**
      * @throws Exception
      */
-    public function index(): array
+    public function index(RequestDTO $requestDTO): array
     {
         return ['this is welcome page'];
     }
 
-    public function favicon(): void
+    public function favicon(RequestDTO $requestDTO): void
     {
         header('Content-Type: image/x-icon');
         readfile(ROOT_DIR . '/public/favicon.png');

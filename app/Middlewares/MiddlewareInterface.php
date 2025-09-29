@@ -2,7 +2,9 @@
 
 namespace App\Middlewares;
 
+use App\Http\RequestDTO;
+
 interface MiddlewareInterface
 {
-    public function handle(array $request, callable $next);
+    public function handle(RequestDTO $request, callable $next);
 }

@@ -2,13 +2,15 @@
 
 namespace App\Middlewares;
 
+use App\Http\RequestDTO;
+
 readonly class MiddlewareDispatcher
 {
     public function __construct(private array $middlewares = [])
     {
     }
 
-    public function dispatch(array $request, callable $controller)
+    public function dispatch(RequestDTO $request, callable $controller)
     {
         $pipeline = array_reduce(
             array_reverse($this->middlewares),

@@ -3,15 +3,13 @@
 namespace App\Controllers;
 
  use App\DB\Contracts\DBConnection;
+ use App\Http\RequestDTO;
  use App\Repositories\WhitelistRepository;
  use Exception;
 
  readonly class WhitelistController implements ControllerInterface
  {
-     private string $entityMethod;
      private DBConnection $db;
-     private int $uriEmbeddedParam;
-     private array $bodyParams;
 
      private WhitelistRepository $repo;
 
@@ -19,28 +17,16 @@ namespace App\Controllers;
       * @throws Exception
       */
      public function __construct(
-         array                      $uriParams,
-         array                      $bodyParams,
-         string                     $entityMethod,
-         int                        $uriEmbeddedParam,
          DBConnection $db,
      ) {
-            $this->entityMethod = $entityMethod;
-            $this->uriEmbeddedParam = $uriEmbeddedParam;
-            $this->bodyParams = $bodyParams;
             $this->db = $db;
             $this->repo = new  WhitelistRepository($this->db);
-     }
-
-     public function __invoke()
-     {
-         return call_user_func([$this, $this->entityMethod]);
      }
 
      /**
       * @throws Exception
       */
-     public function index(): array
+     public function index(RequestDTO $requestDTO): array
      {
          return $this->repo->all();
      }
@@ -48,27 +34,27 @@ namespace App\Controllers;
      /**
       * @throws Exception
       */
-     public function store(): string
+     public function store(RequestDTO $requestDTO): string
      {
-         $this->repo->store($this->bodyParams);
+         $this->repo->store($requestDTO->bodyParams);
          return 'stored!';
      }
 
      /**
       * @throws Exception
       */
-     public function update(): string
+     public function update(RequestDTO $requestDTO): string
      {
-         $this->repo->update($this->uriEmbeddedParam, $this->bodyParams);
+         $this->repo->update($requestDTO->uriEmbeddedParam, $requestDTO->bodyParams);
          return 'updated!';
      }
 
      /**
       * @throws Exception
       */
-     public function delete(): string
+     public function delete(RequestDTO $requestDTO): string
      {
-         $this->repo->delete($this->uriEmbeddedParam);
+         $this->repo->delete($requestDTO->uriEmbeddedParam);
          return 'deleted';
      }
  }

@@ -3,17 +3,14 @@
 namespace App\Controllers;
 
 use App\DB\Contracts\DBConnection;
+use App\Http\RequestDTO;
 use App\Repositories\BlacklistRepository;
 use Exception;
 
 readonly class BlacklistController implements ControllerInterface
 {
-    private string $entityMethod;
     private DBConnection $primaryDB;
     private DBConnection $replicaDB;
-
-    private int $uriEmbeddedParam;
-    private array $bodyParams;
 
     private BlacklistRepository $repository;
 
@@ -21,32 +18,19 @@ readonly class BlacklistController implements ControllerInterface
      * @throws Exception
      */
     public function __construct(
-        array        $uriParams,
-        array        $bodyParams,
-        string       $entityMethod,
-        int          $uriEmbeddedParam,
         DBConnection $primaryDB,
         DBConnection $replicaDB,
     )
     {
-        $this->entityMethod = $entityMethod;
         $this->primaryDB = $primaryDB;
         $this->replicaDB = $replicaDB;
-        $this->uriEmbeddedParam = $uriEmbeddedParam;
-        $this->bodyParams = $bodyParams;
         $this->repository = new BlacklistRepository($this->primaryDB, $this->replicaDB);
-    }
-
-    public function __invoke()
-    {
-        return call_user_func([$this, $this->entityMethod]);
-
     }
 
     /**
      * @throws Exception
      */
-    public function index(): array
+    public function index(RequestDTO $requestDTO): array
     {
         return $this->repository->all();
     }
@@ -54,9 +38,9 @@ readonly class BlacklistController implements ControllerInterface
     /**
      * @throws Exception
      */
-    public function store(): string
+    public function store(RequestDTO $requestDTO): string
     {
-        $this->repository->store($this->bodyParams);
+        $this->repository->store($requestDTO->bodyParams);
 
         return 'stored!';
     }
@@ -64,9 +48,9 @@ readonly class BlacklistController implements ControllerInterface
     /**
      * @throws Exception
      */
-    public function update(): string
+    public function update(RequestDTO $requestDTO): string
     {
-        $this->repository->update($this->uriEmbeddedParam, $this->bodyParams);
+        $this->repository->update($requestDTO->uriEmbeddedParam, $requestDTO->bodyParams);
 
         return 'updated!';
     }
@@ -74,17 +58,17 @@ readonly class BlacklistController implements ControllerInterface
     /**
      * @throws Exception
      */
-    public function delete(): string
+    public function delete(RequestDTO $requestDTO): string
     {
-        $this->repository->delete($this->uriEmbeddedParam);
+        $this->repository->delete($requestDTO->uriEmbeddedParam);
 
         return 'deleted';
     }
 
-    public function searchByName(): array
+    public function searchByName(RequestDTO $requestDTO): array
     {
-        $name = $this->bodyParams['name'];
-        $birthDate = $this->bodyParams['birthdate']?? null;
+        $name = $requestDTO->bodyParams['name'];
+        $birthDate = $requestDTO->bodyParams['birthdate']?? null;
 
         return $this->repository->searchByName($name, $birthDate);
     }

@@ -3,6 +3,7 @@
 namespace App\Routing;
 
 use App\Container\Container;
+use App\Http\RequestDTO;
 use App\Log\LoggerInterface;
 use App\Middlewares\MiddlewareDispatcher;
 use Exception;
@@ -70,7 +71,7 @@ readonly class HttpHandler
     /**
      * @throws Exception
      */
-    public function handleRequest(array $request, Container $container)
+    public function handleRequest(RequestDTO $request, Container $container)
     {
         $controllerClass = $this->getController();
         $method = $this->getMethod();
@@ -78,18 +79,13 @@ readonly class HttpHandler
 
         $middlewareInstances = array_map(fn($mwClass) => $container->get($mwClass), $middlewares);
 
-        $controllerCallable = function($req) use ($controllerClass, $method, $container) {
+        $controllerCallable = function($request) use ($controllerClass, $method, $container) {
 
             $controllerFactory = $container->get($controllerClass);
 
-            $controller = $controllerFactory(
-                $req['uriParams'] ?? [],
-                $req['bodyParams'] ?? [],
-                $method,
-                $req['uriEmbeddedParam'] ?? null
-            );
+            $controller = $controllerFactory();
 
-            return $controller->$method();
+            return $controller->$method($request);
         };
 
         $dispatcher = new MiddlewareDispatcher($middlewareInstances);

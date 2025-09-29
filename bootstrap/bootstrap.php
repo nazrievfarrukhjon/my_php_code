@@ -114,14 +114,14 @@ $container->setFactory('app', function($c) {
     return new App(
         $c->get('env'),
         $c->get('logger'),
-        fn($uri, $method, $contentType, $data) => new WebRequest(
+        fn($uri, $method, $contentType, $bodyContent) => new WebRequest(
             new HttpUri($uri, $method),
             $method,
             $contentType,
-            $data,
-            $c->get('primary_db'),
+            $bodyContent,
             $c->get('logger'),
             $c,
+            $c->get('primary_db'),
         ),
         fn($argv) => new Console([
                     'migrate' => new MigrateCommand($c->get('primary_db'), 'migrate'),
@@ -133,42 +133,26 @@ $container->setFactory('app', function($c) {
 
 
 $container->setFactory(WelcomeController::class, function($c) {
-    return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new WelcomeController(
-        $uriParams,
-        $bodyParams,
-        $entityMethod,
-        $uriEmbeddedParams,
+    return fn() => new WelcomeController(
         $c->get('primary_db'),
     );
 });
 
 $container->setFactory(BlacklistController::class, function($c) {
-    return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new BlacklistController(
-        $uriParams,
-        $bodyParams,
-        $entityMethod,
-        $uriEmbeddedParams,
+    return fn() => new BlacklistController(
         $c->get('primary_db'),
         $c->get('replica_db'),
     );
 });
 
 $container->setFactory(WhitelistController::class, function($c) {
-    return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new WhitelistController(
-        $uriParams,
-        $bodyParams,
-        $entityMethod,
-        $uriEmbeddedParams,
+    return fn() => new WhitelistController(
         $c->get('primary_db'),
     );
 });
 
 $container->setFactory(AuthController::class, function($c) {
-    return fn($uriParams, $bodyParams, $entityMethod, $uriEmbeddedParams) => new AuthController(
-        $uriParams,
-        $bodyParams,
-        $entityMethod,
-        $uriEmbeddedParams,
+    return fn() => new AuthController(
         $c->get('primary_db'),
         $c->get('replica_db'),
         $c->get('redis_cache'),

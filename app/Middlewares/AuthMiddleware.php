@@ -7,6 +7,7 @@ use App\Auth\JWT;
 use App\Auth\JWTAuthStrategy;
 use App\Cache\CacheInterface;
 use App\DB\Contracts\DBConnection;
+use App\Http\RequestDTO;
 use Exception;
 
 readonly class AuthMiddleware implements MiddlewareInterface
@@ -19,7 +20,7 @@ readonly class AuthMiddleware implements MiddlewareInterface
     /**
      * @throws Exception
      */
-    public function handle(array $request, callable $next)
+    public function handle(RequestDTO $request, callable $next)
     {
         $auth = Auth::getInstance($this->cache);
 

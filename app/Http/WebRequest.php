@@ -17,7 +17,6 @@ readonly class WebRequest
         private string          $httpMethod,
         private string          $contentType,
         private array           $bodyContents,
-        private DBConnection        $db,
         private LoggerInterface $logger,
         private Container $container,
     )
@@ -42,13 +41,14 @@ readonly class WebRequest
         $bodyParams = $parsedParams['body'];
         $uriParams = $parsedParams['uri'];
 
-        $request = [
-            'uriParams' => $uriParams,
-            'bodyParams' => $bodyParams,
-            'uriEmbeddedParam' => $this->httpUri->uriEmbeddedParam()
-        ];
+        $requestDTO = new RequestDTO(
+            $uriParams,
+            $bodyParams,
+            $this->httpUri->uriEmbeddedParam(),
+        );
 
-        $associatedUrlToController = new HttpHandler(
+
+        $httpHandler = new HttpHandler(
             $this->httpUri->cleanUri(),
             $this->httpMethod,
             $routes,
@@ -56,7 +56,7 @@ readonly class WebRequest
         );
 
         try {
-            $response = $associatedUrlToController->handleRequest($request, $this->container);
+            $response = $httpHandler->handleRequest($requestDTO, $this->container);
             echo json_encode($response);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
