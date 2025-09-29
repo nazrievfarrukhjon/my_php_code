@@ -3,30 +3,39 @@
 namespace App\Middlewares;
 
 use App\Auth\Auth;
-use App\Auth\TokenAuth;
+use App\Auth\JWT;
+use App\Auth\JWTAuthStrategy;
 use App\Cache\CacheInterface;
 use App\DB\Contracts\DBConnection;
+use Exception;
 
-readonly class AuthMiddleware implements MiddlewareInterface {
-
+readonly class AuthMiddleware implements MiddlewareInterface
+{
     public function __construct(
-        private DBConnection   $db,
+        private DBConnection $db,
         private CacheInterface $cache
-    ){}
+    ) {}
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function handle(array $request, callable $next) {
+    public function handle(array $request, callable $next)
+    {
         $auth = Auth::getInstance($this->cache);
 
-        // Check for Authorization header
         $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 
-        $auth->setStrategy(new TokenAuth($this->db, $this->cache));
+        if (!$auth->check()) {
+            $auth->setStrategy(
+                new JWTAuthStrategy(
+                    $this->db, $this->cache,
+                    new JWT('your_secret_here', 'HS256', 3600)
+                )
+            );
 
-        if (!$auth->check() && $header) {
-            $auth->authenticateBearer($header);
+            if ($header && str_starts_with($header, 'Bearer ')) {
+                $auth->authenticateBearer($header);
+            }
         }
 
         if (!$auth->check()) {

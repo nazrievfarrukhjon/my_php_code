@@ -2,9 +2,9 @@ up:
 	docker-compose up -d
 
 composer_update:
-	docker-compose run --rm composer_my_php_code composer update
+	docker-compose run --rm php1 composer update
 composer_install:
-	docker-compose run --rm composer_my_php_code composer install
+	docker-compose run --rm php1 composer install
 down:
 	docker-compose down
 

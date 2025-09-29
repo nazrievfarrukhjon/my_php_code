@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Auth\Auth;
 use App\Auth\EmailAuth;
+use App\Auth\JWT;
+use App\Auth\JWTAuthStrategy;
 use App\Auth\TokenAuth;
 use App\Cache\CacheInterface;
 use App\DB\Contracts\DBConnection;
@@ -20,6 +22,8 @@ class AuthController implements ControllerInterface
     private array $bodyParams;
 
     private CacheInterface $cache;
+    private JWT $jwt;
+    private Auth $auth;
 
     /**
      * @throws Exception
@@ -39,7 +43,12 @@ class AuthController implements ControllerInterface
         $this->primaryDB = $primaryDB;
         $this->replicaDB = $replicaDB;
         $this->cache = $cache;
+
+        $this->jwt = new JWT('your_secret_here', 'HS256', 3600);
+        $this->auth = new Auth($cache);
     }
+
+
 
     public function __invoke()
     {
@@ -49,40 +58,52 @@ class AuthController implements ControllerInterface
     public function login(): void
     {
         $request = $this->bodyParams;
-        $auth = Auth::getInstance($this->cache);
 
         if (isset($request['email'])) {
-            $auth->setStrategy(new EmailAuth($this->primaryDB, $this->cache));
+            $this->auth->setStrategy(new JWTAuthStrategy($this->primaryDB, $this->cache, $this->jwt));
         } elseif (isset($request['token'])) {
-            $auth->setStrategy(new TokenAuth($this->primaryDB, $this->cache));
+            $this->auth->setStrategy(new TokenAuth($this->primaryDB, $this->cache));
         }
 
         try {
-            $token = $auth->login($request);
-            echo json_encode(['success' => true, 'user' => $auth->user(), 'token' => $token]);
+            $token = $this->auth->login($request);
+            echo json_encode([
+                'success' => true,
+                'user' => $this->auth->user(),
+                'token' => $token
+            ]);
         } catch (Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
         }
     }
 
     public function register(): void
     {
-        try {
-            $request = $this->bodyParams;
-            //
-            if (empty($request['email']) || empty($request['password'])) {
-                throw new Exception("Email and password are required");
-            }
+        $request = $this->bodyParams;
 
-            //
-            $auth = Auth::getInstance();
-            $auth->setStrategy(new EmailAuth($this->primaryDB));
-            $result = $auth->register($request);
-            echo json_encode(['success' => true, 'user' => $auth->user(), 'result' => $result]);
-        } catch (Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        if (empty($request['email']) || empty($request['password'])) {
+            echo json_encode(['success' => false, 'error' => 'Email and password are required']);
+            return;
         }
 
+        $this->auth->setStrategy(new EmailAuth($this->primaryDB, $this->cache));
+
+        try {
+            $result = $this->auth->register($request);
+            echo json_encode([
+                'success' => true,
+                'user' => $this->auth->user(),
+                'result' => $result
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
 }

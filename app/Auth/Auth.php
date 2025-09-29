@@ -11,13 +11,22 @@ class Auth
     private ?AuthStrategy $strategy = null;
     private ?array $user = null;
 
-    private function __construct(private readonly CacheInterface $cache)
+    public function __construct(private readonly CacheInterface $cache)
     {
     }
 
-    public static function getInstance(CacheInterface $cache): self
+    /**
+     * @throws Exception
+     */
+    public static function getInstance(?CacheInterface $cache = null): self
     {
-        return self::$instance ??= new self($cache);
+        if (self::$instance === null) {
+            if ($cache === null) {
+                throw new Exception("CacheInterface is required to initialize Auth singleton. Call Auth::getInstance(\$cache) first or construct Auth via DI.");
+            }
+            self::$instance = new self($cache);
+        }
+        return self::$instance;
     }
 
     public function setStrategy(AuthStrategy $strategy): void
@@ -34,8 +43,6 @@ class Auth
             throw new Exception("Auth strategy not set");
         }
 
-        $token = $this->generateToken();
-
         $success = $this->strategy->authenticate($credentials);
         if (!$success) {
             throw new Exception("Invalid credentials");
@@ -43,16 +50,22 @@ class Auth
 
         $this->user = $this->strategy->getUser();
 
+        if ($this->strategy instanceof JWTAuthStrategy) {
+            $token = $this->strategy->getJWT($this->user['id']);
+            return $token;
+        }
 
+        $token = bin2hex(random_bytes(32));
         $this->cache->set($token, $this->user, 3600);
-
         return $token;
     }
 
     public function user(): ?array
     {
         if ($this->user) {
-            unset($this->user['password']);
+            if (isset($this->user['password'])) {
+                unset($this->user['password']);
+            }
         }
         return $this->user;
     }
@@ -95,9 +108,21 @@ class Auth
 
         if ($success) {
             $this->user = $this->strategy->getUser();
+
+            if (is_array($this->user) && isset($this->user['password'])) {
+                unset($this->user['password']);
+            }
         }
 
         return $success;
+    }
+
+    public function setUser(?array $user): void
+    {
+        $this->user = $user;
+        if (is_array($this->user) && isset($this->user['password'])) {
+            unset($this->user['password']);
+        }
     }
 
     /**

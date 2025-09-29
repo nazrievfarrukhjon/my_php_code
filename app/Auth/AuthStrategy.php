@@ -2,12 +2,10 @@
 
 namespace App\Auth;
 
-use App\Cache\CacheInterface;
-use App\DB\Contracts\DBConnection;
-
-interface AuthStrategy {
-    public function __construct(DBConnection $db, CacheInterface $cache);
-
+interface AuthStrategy
+{
     public function authenticate(array $credentials): bool;
+    public function authenticateToken(string $token): bool;
     public function getUser(): ?array;
+    public function register(array $request): array;
 }

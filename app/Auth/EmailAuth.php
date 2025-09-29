@@ -10,7 +10,7 @@ use PDO;
 class EmailAuth implements AuthStrategy {
     private ?array $user = null;
 
-    public function __construct(private readonly DBConnection $db, private CacheInterface $cache)
+    public function __construct(private readonly DBConnection $db, private readonly CacheInterface $cache)
     {
     }
 
@@ -79,4 +79,8 @@ class EmailAuth implements AuthStrategy {
         ];
     }
 
+    public function authenticateToken(string $token): bool
+    {
+        // TODO: Implement authenticateToken() method.
+    }
 }
