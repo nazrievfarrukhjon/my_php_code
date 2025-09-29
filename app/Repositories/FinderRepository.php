@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-readonly class FinderRepository
+readonly class FinderRepository implements RepositoryInterface
 {
     public function __construct(private string $word)
     {

@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\DB\Contracts\DBConnection;
 use PDO;
 
-class AccessTokenRepository
+class AccessTokenRepository implements RepositoryInterface
 {
     private DBConnection $db;
 

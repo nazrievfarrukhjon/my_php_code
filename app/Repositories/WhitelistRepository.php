@@ -8,7 +8,7 @@ use Exception;
 use PDO;
 use PDOException;
 
-readonly class WhitelistRepository
+readonly class WhitelistRepository implements RepositoryInterface
 {
 
     private PDO $connection;

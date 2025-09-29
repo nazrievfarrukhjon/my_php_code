@@ -8,7 +8,7 @@ use Exception;
 use PDO;
 use PDOException;
 
-readonly class BlacklistRepository
+readonly class BlacklistRepository implements RepositoryInterface
 {
     public function __construct(
         private DBConnection $primary,

@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\DB\Contracts\DBConnection;
 use PDO;
 
-class RefreshTokenRepository
+class RefreshTokenRepository implements RepositoryInterface
 {
     private DBConnection $db;
 
