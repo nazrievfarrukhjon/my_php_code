@@ -121,18 +121,35 @@ services:
     depends_on:
       - php2
 
-  grpc_server:
-    container_name: grpc_server
+  websocket:
     build:
-      context: ./docker/php
+      context: ./docker/ws
       dockerfile: Dockerfile
-    command: php ./entrypoint/grpc_server.php
+    container_name: websocket
+    ports:
+      - "6001:6001"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PORT=6001
     depends_on:
-      - pg_primary
+      - redis
     networks:
       - my_php_code_network
-    ports:
-      - "50051:50051"
+
+
+#  grpc_server:
+#    container_name: grpc_server
+#    build:
+#      context: ./docker/php
+#      dockerfile: Dockerfile
+#    command: php ./entrypoint/grpc_server.php
+#    depends_on:
+#      - pg_primary
+#    networks:
+#      - my_php_code_network
+#    ports:
+#      - "50051:50051"
 
 networks:
   my_php_code_network:

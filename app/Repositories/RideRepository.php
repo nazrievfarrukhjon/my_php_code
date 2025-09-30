@@ -19,17 +19,19 @@ readonly class RideRepository implements RepositoryInterface
             throw new \InvalidArgumentException('user_id, pickup and dropoff are required');
         }
 
-        $pickupCoords = explode(',', str_replace(' ', '', $bodyParams['pickup']));
-        if (count($pickupCoords) !== 2) {
+        // Extract pickup coordinates
+        if (!isset($bodyParams['pickup']['lat'], $bodyParams['pickup']['lon'])) {
             throw new \InvalidArgumentException('Invalid pickup coordinates format');
         }
-        [$pickupLat, $pickupLon] = array_map('floatval', $pickupCoords);
+        $pickupLat = floatval($bodyParams['pickup']['lat']);
+        $pickupLon = floatval($bodyParams['pickup']['lon']);
 
-        $dropoffCoords = explode(',', str_replace(' ', '', $bodyParams['dropoff']));
-        if (count($dropoffCoords) !== 2) {
+        // Extract dropoff coordinates
+        if (!isset($bodyParams['dropoff']['lat'], $bodyParams['dropoff']['lon'])) {
             throw new \InvalidArgumentException('Invalid dropoff coordinates format');
         }
-        [$dropoffLat, $dropoffLon] = array_map('floatval', $dropoffCoords);
+        $dropoffLat = floatval($bodyParams['dropoff']['lat']);
+        $dropoffLon = floatval($bodyParams['dropoff']['lon']);
 
         $sql = "
         INSERT INTO rides (user_id, pickup, dropoff, status)

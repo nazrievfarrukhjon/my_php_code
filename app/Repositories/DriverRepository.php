@@ -12,14 +12,10 @@ readonly class DriverRepository implements RepositoryInterface
         private DBConnection $replicaDB,
     )
     {
-    }
-
-    public function storeDriverLocation(array $coordinates): array
-    {
         $pdo = $this->primaryDB->connection();
-        $driverId = $coordinates['driver_id'];
-        $lat = $coordinates['latitude'];
-        $lon = $coordinates['longitude'];
+        $driverId = $params['driver_id'];
+        $lat = $params['latitude'];
+        $lon = $params['longitude'];
 
         $query = "SELECT id FROM driver_locations WHERE driver_id = :driver_id";
         $stmt = $pdo->prepare($query);
@@ -27,7 +23,6 @@ readonly class DriverRepository implements RepositoryInterface
         $existing = $stmt->fetch();
 
         if ($existing) {
-            // обновляем
             $update = "
             UPDATE driver_locations
             SET location = ST_SetSRID(ST_MakePoint(:lon, :lat), 4326),
@@ -41,7 +36,6 @@ readonly class DriverRepository implements RepositoryInterface
                 'driver_id' => $driverId
             ]);
         } else {
-            // вставляем
             $insert = "
             INSERT INTO driver_locations(driver_id, location, updated_at)
             VALUES(:driver_id, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), NOW())
@@ -53,6 +47,14 @@ readonly class DriverRepository implements RepositoryInterface
                 'lat' => $lat
             ]);
         }
+
+        //
+        $this->redis->publish('driver_location_updates', json_encode([
+            'driver_id' => $params['driver_id'],
+            'lat' => $params['latitude'],
+            'lon' => $params['longitude'],
+        ]));
+
 
         return [
             'driver_id' => $driverId,

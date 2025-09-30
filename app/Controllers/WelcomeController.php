@@ -22,10 +22,40 @@ class WelcomeController implements ControllerInterface
     /**
      * @throws Exception
      */
-    public function index(RequestDTO $requestDTO): array
+    public function index(RequestDTO $requestDTO): string
     {
-        return ['this is welcome page'];
+        return <<<HTML
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Taxi Tracker</title>
+</head>
+<body>
+    <h1>Welcome to Taxi Tracker</h1>
+    <div id="map"></div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            console.log('Driver location update:', data);
+            // TODO: Update your map marker here
+        };
+
+        ws.onopen = function() {
+            console.log('Connected to WebSocket server!');
+        };
+
+        ws.onclose = function() {
+            console.log('WebSocket connection closed');
+        };
+    </script>
+</body>
+</html>
+HTML;
     }
+
 
     public function favicon(RequestDTO $requestDTO): void
     {

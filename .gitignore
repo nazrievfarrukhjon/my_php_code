@@ -11,3 +11,4 @@
 logs
 database.sqlite
 .idea
+/docker/ws/node_modules/
