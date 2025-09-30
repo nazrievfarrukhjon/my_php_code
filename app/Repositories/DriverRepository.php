@@ -3,7 +3,10 @@
 namespace App\Repositories;
 
 use App\DB\Contracts\DBConnection;
+use Exception;
 use PDO;
+use Redis;
+use WebSocket\Client;
 
 readonly class DriverRepository implements RepositoryInterface
 {
@@ -11,6 +14,10 @@ readonly class DriverRepository implements RepositoryInterface
         private DBConnection $primaryDB,
         private DBConnection $replicaDB,
     )
+    {
+    }
+
+    public function storeDriverLocation(array $params): array
     {
         $pdo = $this->primaryDB->connection();
         $driverId = $params['driver_id'];
@@ -48,13 +55,37 @@ readonly class DriverRepository implements RepositoryInterface
             ]);
         }
 
-        //
-        $this->redis->publish('driver_location_updates', json_encode([
-            'driver_id' => $params['driver_id'],
-            'lat' => $params['latitude'],
-            'lon' => $params['longitude'],
-        ]));
+        // publish event here
+        try {
 
+            $redis = new Redis();
+            $redis->connect('my_php_code-redis-1', 6379);
+            $redis->publish('driver_updates', json_encode([
+                'driver_id' => $driverId,
+                'lat' => $lat,
+                'lon' => $lon,
+            ]));
+
+            //
+            $ws = new Client("ws://websocket:6001", []);
+
+            $ws->send(json_encode([
+                'event' => 'update',
+                'channel' => 'driver_updates',
+                'data' => [
+                    'driver_id' => $driverId,
+                    'lat' => $lat,
+                    'lon' => $lon,
+                ]
+            ]));
+
+            echo "Published driver location directly to WebSocket!\n";
+            error_log("WebSocket publish OK", 3, ROOT_DIR . '/logs/app.log');
+
+        } catch (Exception $e) {
+            error_log("WebSocket publish failed: " . $e->getMessage(), 3, ROOT_DIR . '/logs/app.log');
+            echo "WebSocket publish failed: " . $e->getMessage() . "\n";
+        }
 
         return [
             'driver_id' => $driverId,
@@ -80,8 +111,8 @@ readonly class DriverRepository implements RepositoryInterface
         $stmt = $connection->prepare($sql);
         $stmt->execute([
             'name' => $bodyParams['name'] ?? null,
-            'lat'  => $lat,
-            'lon'  => $lon,
+            'lat' => $lat,
+            'lon' => $lon,
         ]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);

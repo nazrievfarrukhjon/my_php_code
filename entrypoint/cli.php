@@ -3,6 +3,7 @@
 use App\App;
 use App\Console\Commands\ClearCacheCommand;
 use App\Console\Commands\FakeBlacklistCommand;
+use App\Console\Commands\ListenToChannelCommand;
 use App\Console\Commands\MigrateCommand;
 use App\Console\Commands\RollbackCommand;
 use App\Console\Console;
@@ -24,6 +25,7 @@ $commands = [
     'rollback' => new RollbackCommand($db),
     'cache:clean' => new ClearCacheCommand($routeCache),
     'fake:blacklist' => new FakeBlacklistCommand($container->get('primary_db')),
+    'listen' => new ListenToChannelCommand(),
 ];
 
 // CLI factory
