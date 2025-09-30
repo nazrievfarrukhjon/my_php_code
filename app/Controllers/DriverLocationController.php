@@ -3,11 +3,11 @@
 namespace App\Controllers;
 
 use App\Http\RequestDTO;
-use App\Repositories\DriverRepository;
+use App\Repositories\DriverLocationRepository;
 
-readonly class DriverController implements ControllerInterface
+readonly class DriverLocationController implements ControllerInterface
 {
-    public function __construct(private DriverRepository $repository){}
+    public function __construct(private DriverLocationRepository $repository){}
 
     public function storeDriverLocation(RequestDTO $requestDTO): array
     {

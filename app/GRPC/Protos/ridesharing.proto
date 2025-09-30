@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ridesharing;
+
+service DriverLocationService {
+  rpc UpdateLocation(stream DriverLocationRequest) returns (DriverLocationResponse);
+}
+
+message DriverLocationRequest {
+  int32 driver_id = 1;
+  double latitude = 2;
+  double longitude = 3;
+}
+
+message DriverLocationResponse {
+  bool success = 1;
+  string message = 2;

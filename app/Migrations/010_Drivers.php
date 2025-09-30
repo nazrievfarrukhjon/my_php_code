@@ -20,12 +20,12 @@ class Drivers extends BaseMigration
 
         $sql = "
             CREATE EXTENSION IF NOT EXISTS postgis;
-            CREATE TABLE drivers (
+            CREATE TABLE IF NOT EXISTS drivers (
                 id SERIAL PRIMARY KEY,
                 name TEXT,
                 location GEOGRAPHY(Point, 4326)
             );
-            CREATE INDEX idx_drivers_location ON drivers USING GIST (location);
+            CREATE INDEX IF NOT EXISTS idx_drivers_location ON drivers USING GIST (location);
         ";
 
         $this->connection->exec($sql);

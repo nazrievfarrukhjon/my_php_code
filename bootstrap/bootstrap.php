@@ -9,8 +9,10 @@ use App\Console\Commands\RollbackCommand;
 use App\Console\Console;
 use App\Container\Container;
 use App\Controllers\AuthController;
+use App\Controllers\BillingController;
 use App\Controllers\BlacklistController;
-use App\Controllers\DriverController;
+use App\Controllers\DriverLocationController;
+use App\Controllers\RideController;
 use App\Controllers\WelcomeController;
 use App\Controllers\WhitelistController;
 use App\DB\DBFactories\MysqlFactory;
@@ -22,7 +24,9 @@ use App\Http\WebRequest;
 use App\Log\Logger;
 use App\Middlewares\AuthMiddleware;
 use App\Middlewares\LoggingMiddleware;
-use App\Repositories\DriverRepository;
+use App\Repositories\BillingRepository;
+use App\Repositories\DriverLocationRepository;
+use App\Repositories\RideRepository;
 use App\Repositories\WhitelistRepository;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -161,9 +165,27 @@ $container->setFactory(AuthController::class, function($c) {
     );
 });
 
-$container->setFactory(DriverController::class, function($c) {
-    return fn() => new DriverController(
-        new DriverRepository(
+$container->setFactory(DriverLocationController::class, function($c) {
+    return fn() => new DriverLocationController(
+        new DriverLocationRepository(
+            $c->get('primary_db'),
+            $c->get('replica_db'),
+        ),
+    );
+});
+
+$container->setFactory(RideController::class, function($c) {
+    return fn() => new RideController(
+        new RideRepository(
+            $c->get('primary_db'),
+            $c->get('replica_db'),
+        ),
+    );
+});
+
+$container->setFactory(BillingController::class, function($c) {
+    return fn() => new BillingController(
+        new BillingRepository(
             $c->get('primary_db'),
             $c->get('replica_db'),
         ),

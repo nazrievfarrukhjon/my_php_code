@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\DB\Contracts\DBConnection;
 
-readonly class DriverRepository implements RepositoryInterface
+readonly class DriverLocationRepository implements RepositoryInterface
 {
     public function __construct(
         private DBConnection $primaryDB,

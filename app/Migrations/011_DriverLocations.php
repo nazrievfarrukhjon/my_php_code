@@ -20,14 +20,14 @@ class DriverLocations extends BaseMigration
         $sql = "
             CREATE EXTENSION IF NOT EXISTS postgis;
 
-            CREATE TABLE driver_locations (
+            CREATE TABLE IF NOT EXISTS driver_locations (
                 id SERIAL PRIMARY KEY,
                 driver_id INT NOT NULL REFERENCES drivers(id) ON DELETE CASCADE,
                 location GEOGRAPHY(Point, 4326) NOT NULL,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
 
-            CREATE INDEX idx_driver_locations ON driver_locations USING GIST(location);
+            CREATE INDEX IF NOT EXISTS idx_driver_locations ON driver_locations USING GIST(location);
         ";
 
         $this->connection->exec($sql);

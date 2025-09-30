@@ -121,6 +121,19 @@ services:
     depends_on:
       - php2
 
+  grpc_server:
+    container_name: grpc_server
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    command: php ./entrypoint/grpc_server.php
+    depends_on:
+      - pg_primary
+    networks:
+      - my_php_code_network
+    ports:
+      - "50051:50051"
+
 networks:
   my_php_code_network:
     driver: bridge
