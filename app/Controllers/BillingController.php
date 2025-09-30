@@ -18,7 +18,6 @@ readonly class BillingController implements ControllerInterface
             $rideId = $requestDTO->bodyParams['ride_id'];
             $userId = $requestDTO->bodyParams['user_id'];
             $amount = $requestDTO->bodyParams['amount'];
-
             $result = $this->billingRepository->chargeRide($rideId, $userId, $amount);
 
             return [

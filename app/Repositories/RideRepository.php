@@ -13,32 +13,43 @@ readonly class RideRepository implements RepositoryInterface
         private DBConnection $replicaDB,
     ) {}
 
-    /**
-     * Create a new ride request
-     */
     public function createRide(array $bodyParams): array
     {
+        if (empty($bodyParams['user_id']) || empty($bodyParams['pickup']) || empty($bodyParams['dropoff'])) {
+            throw new \InvalidArgumentException('user_id, pickup and dropoff are required');
+        }
+
+        $pickupCoords = explode(',', str_replace(' ', '', $bodyParams['pickup']));
+        if (count($pickupCoords) !== 2) {
+            throw new \InvalidArgumentException('Invalid pickup coordinates format');
+        }
+        [$pickupLat, $pickupLon] = array_map('floatval', $pickupCoords);
+
+        $dropoffCoords = explode(',', str_replace(' ', '', $bodyParams['dropoff']));
+        if (count($dropoffCoords) !== 2) {
+            throw new \InvalidArgumentException('Invalid dropoff coordinates format');
+        }
+        [$dropoffLat, $dropoffLon] = array_map('floatval', $dropoffCoords);
+
         $sql = "
-            INSERT INTO rides (client_id, pickup, dropoff, status)
-            VALUES (:client_id, ST_GeogFromText(:pickup), ST_GeogFromText(:dropoff), 'pending')
-            RETURNING id, status
-        ";
+        INSERT INTO rides (user_id, pickup, dropoff, status)
+        VALUES (:user_id, ST_GeogFromText(:pickup), ST_GeogFromText(:dropoff), 'pending')
+        RETURNING id, status
+    ";
 
         $connection = $this->primaryDB->connection();
         $stmt = $connection->prepare($sql);
 
         $stmt->execute([
-            'client_id' => $bodyParams['client_id'] ?? null, // can be NULL for street hail
-            'pickup'    => "SRID=4326;POINT({$bodyParams['pickup']['lon']} {$bodyParams['pickup']['lat']})",
-            'dropoff'   => "SRID=4326;POINT({$bodyParams['dropoff']['lon']} {$bodyParams['dropoff']['lat']})",
+            'user_id' => $bodyParams['user_id'],
+            'pickup'  => "SRID=4326;POINT($pickupLon $pickupLat)",
+            'dropoff' => "SRID=4326;POINT($dropoffLon $dropoffLat)",
         ]);
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Driver accepts ride
-     */
+
     public function acceptRide(int $rideId, int $driverId): array
     {
         $sql = "
@@ -66,9 +77,6 @@ readonly class RideRepository implements RepositoryInterface
         return $result;
     }
 
-    /**
-     * Mark ride as started (driver picked up client)
-     */
     public function startRide(int $rideId): array
     {
         $sql = "
@@ -92,9 +100,7 @@ readonly class RideRepository implements RepositoryInterface
         return $result;
     }
 
-    /**
-     * Mark ride as completed
-     */
+
     public function completeRide(int $rideId): array
     {
         $sql = "
@@ -118,13 +124,10 @@ readonly class RideRepository implements RepositoryInterface
         return $result;
     }
 
-    /**
-     * Get ride status
-     */
     public function getRideStatus(int $rideId): array
     {
         $sql = "
-            SELECT id, client_id, driver_id, status, requested_at, updated_at
+            SELECT id, user_id, driver_id, status, requested_at, updated_at
             FROM rides
             WHERE id = :ride_id
         ";
@@ -141,4 +144,42 @@ readonly class RideRepository implements RepositoryInterface
 
         return $result;
     }
+
+    public function getNearby(int $driver_id, int $radius_km): array
+    {
+        $connection = $this->primaryDB->connection();
+
+        // Convert km to meters
+        $radius_m = $radius_km * 1000;
+
+        $sql = "
+        SELECT 
+            r.id AS ride_id,
+            r.user_id,
+            r.status,
+            ST_Distance(dl.location, r.pickup) AS distance_meters,
+            ST_AsText(r.pickup) AS pickup,
+            ST_AsText(r.dropoff) AS dropoff
+        FROM rides r
+        JOIN driver_locations dl ON dl.driver_id = :driver_id
+        WHERE r.status = 'pending'
+          AND ST_DWithin(dl.location, r.pickup, :radius_m)
+        ORDER BY distance_meters ASC
+    ";
+
+        $stmt = $connection->prepare($sql);
+        $stmt->execute([
+            'driver_id' => $driver_id,
+            'radius_m' => $radius_m
+        ]);
+
+        $rides = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'driver_id' => $driver_id,
+            'radius_km' => $radius_km,
+            'rides' => $rides
+        ];
+    }
+
 }

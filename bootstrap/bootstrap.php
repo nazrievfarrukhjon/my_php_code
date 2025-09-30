@@ -11,7 +11,7 @@ use App\Container\Container;
 use App\Controllers\AuthController;
 use App\Controllers\BillingController;
 use App\Controllers\BlacklistController;
-use App\Controllers\DriverLocationController;
+use App\Controllers\DriverController;
 use App\Controllers\RideController;
 use App\Controllers\WelcomeController;
 use App\Controllers\WhitelistController;
@@ -25,7 +25,7 @@ use App\Log\Logger;
 use App\Middlewares\AuthMiddleware;
 use App\Middlewares\LoggingMiddleware;
 use App\Repositories\BillingRepository;
-use App\Repositories\DriverLocationRepository;
+use App\Repositories\DriverRepository;
 use App\Repositories\RideRepository;
 use App\Repositories\WhitelistRepository;
 use JetBrains\PhpStorm\NoReturn;
@@ -165,9 +165,9 @@ $container->setFactory(AuthController::class, function($c) {
     );
 });
 
-$container->setFactory(DriverLocationController::class, function($c) {
-    return fn() => new DriverLocationController(
-        new DriverLocationRepository(
+$container->setFactory(DriverController::class, function($c) {
+    return fn() => new DriverController(
+        new DriverRepository(
             $c->get('primary_db'),
             $c->get('replica_db'),
         ),

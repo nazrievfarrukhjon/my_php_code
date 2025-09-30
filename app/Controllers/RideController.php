@@ -49,4 +49,10 @@ readonly class RideController implements ControllerInterface
     {
         return $this->repository->getRideStatus($requestDTO->bodyParams['ride_id']);
     }
+
+    public function nearby(RequestDTO $requestDTO): array
+    {
+        return $this->repository->getNearby($requestDTO->bodyParams['driver_id'], $requestDTO->bodyParams['radius_km']);
+    }
+
 }

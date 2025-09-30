@@ -5,8 +5,10 @@ namespace App\Routing;
 use App\Cache\FileCache;
 use App\Container\Container;
 use App\Routing\Routes\AuthRoute;
+use App\Routing\Routes\BillingRoute;
 use App\Routing\Routes\BlacklistRoute;
 use App\Routing\Routes\DriverRoute;
+use App\Routing\Routes\RideRoute;
 use App\Routing\Routes\WelcomeRoute;
 use App\Routing\Routes\WhitelistRoute;
 
@@ -20,6 +22,8 @@ class RoutesRegistration
         WhitelistRoute::class,
         AuthRoute::class,
         DriverRoute::class,
+        RideRoute::class,
+        BillingRoute::class,
     ];
 
     public function __construct(Container $container)

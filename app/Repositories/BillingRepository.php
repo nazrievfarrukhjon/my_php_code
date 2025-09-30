@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 
 use App\DB\Contracts\DBConnection;
+use Exception;
+use PDO;
 
 class BillingRepository implements RepositoryInterface
 {
@@ -13,9 +15,12 @@ class BillingRepository implements RepositoryInterface
     ) {}
 
 
+    /**
+     * @throws Exception
+     */
     public function chargeRide(int $rideId, ?int $userId, float $amount, string $paymentMethod = 'card'): array
     {
-        $connection = $this->db->connection();
+        $connection = $this->primaryDB->connection();
         $connection->beginTransaction();
 
         try {

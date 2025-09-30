@@ -3,8 +3,9 @@
 namespace App\Repositories;
 
 use App\DB\Contracts\DBConnection;
+use PDO;
 
-readonly class DriverLocationRepository implements RepositoryInterface
+readonly class DriverRepository implements RepositoryInterface
 {
     public function __construct(
         private DBConnection $primaryDB,
@@ -61,5 +62,27 @@ readonly class DriverLocationRepository implements RepositoryInterface
         ];
     }
 
+    public function storeDriver(array $bodyParams): array
+    {
+        $connection = $this->primaryDB->connection();
+
+        $lat = $bodyParams['latitude'] ?? null;
+        $lon = $bodyParams['longitude'] ?? null;
+
+        $sql = "
+        INSERT INTO drivers (name, location)
+        VALUES (:name, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326))
+        RETURNING id, name, location
+    ";
+
+        $stmt = $connection->prepare($sql);
+        $stmt->execute([
+            'name' => $bodyParams['name'] ?? null,
+            'lat'  => $lat,
+            'lon'  => $lon,
+        ]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
 }
