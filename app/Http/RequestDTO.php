@@ -8,6 +8,11 @@ class RequestDTO
         public array $uriParams = [],
         public array $bodyParams = [],
         public ?int $uriEmbeddedParam = null,
+        public array $methodArgs = [],
     ) {}
 
+    public function getMethodArgs(): array
+    {
+        return $this->methodArgs;
+    }
 }

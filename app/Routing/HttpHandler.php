@@ -8,8 +8,11 @@ use App\Log\LoggerInterface;
 use App\Middlewares\MiddlewareDispatcher;
 use Exception;
 
-readonly class HttpHandler
+class HttpHandler
 {
+    private ?array $matchedRoute = null;
+    private array $routeParams = [];
+
     public function __construct(
         private string          $httpUri,
         private string          $httpMethod,
@@ -18,18 +21,66 @@ readonly class HttpHandler
     ) {}
 
     /**
-     * @throws Exception
+     * Find matching route with parameter support
      */
-    private function getController(): string
+    private function findMatchingRoute(): ?array
     {
+        if ($this->matchedRoute !== null) {
+            return $this->matchedRoute;
+        }
+
         $this->logger->info('Checking route existence', [
             'httpMethod' => $this->httpMethod,
             'httpUri' => $this->httpUri,
             'routesForMethod' => array_keys($this->routes[$this->httpMethod] ?? [])
         ]);
 
+        // First try exact match
         if (isset($this->routes[$this->httpMethod][$this->httpUri])) {
-            return $this->routes[$this->httpMethod][$this->httpUri]['controller'];
+            $this->matchedRoute = $this->routes[$this->httpMethod][$this->httpUri];
+            return $this->matchedRoute;
+        }
+
+        // Then try parameter matching
+        if (isset($this->routes[$this->httpMethod])) {
+            foreach ($this->routes[$this->httpMethod] as $routePattern => $routeConfig) {
+                if ($this->matchesRoute($routePattern, $this->httpUri)) {
+                    $this->matchedRoute = $routeConfig;
+                    return $this->matchedRoute;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if a route pattern matches the given URI
+     */
+    private function matchesRoute(string $routePattern, string $uri): bool
+    {
+        // Convert route pattern to regex
+        // Replace {param} with named capture groups
+        $pattern = preg_replace('/\{([^}]+)\}/', '(?P<$1>[^/]+)', $routePattern);
+        $pattern = '#^' . $pattern . '$#';
+
+        if (preg_match($pattern, $uri, $matches)) {
+            // Extract parameter values
+            $this->routeParams = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getController(): string
+    {
+        $route = $this->findMatchingRoute();
+        if ($route) {
+            return $route['controller'];
         }
 
         throw new Exception('getController: not found');
@@ -40,8 +91,9 @@ readonly class HttpHandler
      */
     private function getMethod(): string
     {
-        if (isset($this->routes[$this->httpMethod][$this->httpUri])) {
-            return $this->routes[$this->httpMethod][$this->httpUri]['method'];
+        $route = $this->findMatchingRoute();
+        if ($route) {
+            return $route['method'];
         }
 
         throw new Exception('getMethod: not found');
@@ -49,8 +101,9 @@ readonly class HttpHandler
 
     private function getMiddleware(): string|array
     {
-        if (isset($this->routes[$this->httpMethod][$this->httpUri])) {
-            return $this->routes[$this->httpMethod][$this->httpUri]['middlewares'] ?? [];
+        $route = $this->findMatchingRoute();
+        if ($route) {
+            return $route['middlewares'] ?? [];
         }
 
         throw new Exception('getMiddleware: not found');
@@ -61,8 +114,11 @@ readonly class HttpHandler
      */
     public function getMethodArgs(): array
     {
-        if (isset($this->routes[$this->httpMethod][$this->httpUri])) {
-            return $this->routes[$this->httpMethod][$this->httpUri]['args'] ?? [];
+        $route = $this->findMatchingRoute();
+        if ($route) {
+            // Merge predefined args with extracted route parameters
+            $predefinedArgs = $route['args'] ?? [];
+            return array_merge($predefinedArgs, $this->routeParams);
         }
 
         throw new Exception('getMethodArgs: not found');
@@ -76,6 +132,10 @@ readonly class HttpHandler
         $controllerClass = $this->getController();
         $method = $this->getMethod();
         $middlewares = $this->getMiddleware();
+        $methodArgs = $this->getMethodArgs();
+
+        // Update the request with method args
+        $request->methodArgs = $methodArgs;
 
         $middlewareInstances = array_map(fn($mwClass) => $container->get($mwClass), $middlewares);
 

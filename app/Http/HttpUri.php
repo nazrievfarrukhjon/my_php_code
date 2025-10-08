@@ -16,7 +16,8 @@ readonly class HttpUri
 
         if (in_array($_SERVER['REQUEST_METHOD'], $allowedMethods)) {
             $uris = explode('/', $this->httpUri);
-            return end($uris);
+            $lastParam = end($uris);
+            return is_numeric($lastParam) ? (int)$lastParam : -1;
         }
         return -1;
     }
