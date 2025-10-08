@@ -312,9 +312,9 @@ class ElasticsearchService
             
             return [
                 'index' => $this->index,
-                'document_count' => $response['indices'][$this->index]['total']['docs']['count'],
-                'size_in_bytes' => $response['indices'][$this->index]['total']['store']['size_in_bytes'],
-                'status' => 'active'
+                'document_count' => $response['indices'][$this->index]['primaries']['docs']['count'],
+                'size_in_bytes' => $response['indices'][$this->index]['primaries']['store']['size_in_bytes'],
+                'status' => $response['indices'][$this->index]['status']
             ];
         } catch (Exception $e) {
             $this->logger->error('Failed to get index stats', [

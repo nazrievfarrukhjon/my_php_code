@@ -33,7 +33,7 @@ class ElasticsearchController implements ControllerInterface
         $this->elasticsearchService = new ElasticsearchService(
             host: $host,
             port: $port,
-            index: 'fraud', // Default index, can be overridden per operation
+            index: 'rides', // Default index for rides operations
             logger: $this->logger
         );
     }
