@@ -92,6 +92,9 @@ readonly class FraudDetectionService
         return strtr($text, $replacements);
     }
 
+    /**
+     * @throws Exception
+     */
     private function normalizeBirthDate(string $date): string
     {
         try {

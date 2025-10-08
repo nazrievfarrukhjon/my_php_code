@@ -8,12 +8,12 @@ use App\Services\FraudDetectionService;
 use App\Log\LoggerInterface;
 use Exception;
 
-class FraudController implements ControllerInterface
+readonly class FraudController implements ControllerInterface
 {
     public function __construct(
         private FraudDetectionService $fraudService,
-        private RabbitMQService $rabbitMQ,
-        private LoggerInterface $logger
+        private RabbitMQService       $rabbitMQ,
+        private LoggerInterface       $logger
     ) {}
 
     public function checkFraud(RequestDTO $request): void
