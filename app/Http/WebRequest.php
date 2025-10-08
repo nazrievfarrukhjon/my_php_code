@@ -57,7 +57,16 @@ readonly class WebRequest
 
         try {
             $response = $httpHandler->handleRequest($requestDTO, $this->container);
-            echo json_encode($response);
+            
+            // Handle different response types
+            if (is_array($response) && isset($response['content_type']) && isset($response['body'])) {
+                // Set content type header
+                header('Content-Type: ' . $response['content_type']);
+                echo $response['body'];
+            } else {
+                // Default JSON response
+                echo json_encode($response);
+            }
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
             http_response_code(500);

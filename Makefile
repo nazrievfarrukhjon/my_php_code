@@ -26,3 +26,20 @@ es-seed-all:
 
 es-geo-demo:
 	docker-compose run --rm php1 php database/seeders/elasticsearch/GeoDistanceSearchDemo.php
+
+# Swagger/API testing
+swagger-generate:
+	docker-compose run --rm php1 php test_swagger.php
+
+swagger-view:
+	@echo "Open http://localhost:8002/docs in your browser to view Swagger UI"
+	@echo "Or view the static HTML at: http://localhost:8002/swagger.html"
+
+api-test:
+	@echo "Testing API endpoints..."
+	@echo "1. Create rides index:"
+	@curl -X POST http://localhost:8002/api/elasticsearch/indices/rides
+	@echo -e "\n\n2. Get index stats:"
+	@curl -X GET http://localhost:8002/api/elasticsearch/indices/rides/stats
+	@echo -e "\n\n3. Search rides:"
+	@curl -X GET "http://localhost:8002/api/elasticsearch/rides/search?size=5"

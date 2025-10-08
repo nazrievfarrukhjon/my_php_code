@@ -8,9 +8,11 @@ use App\Routing\Routes\AuthRoute;
 use App\Routing\Routes\BillingRoute;
 use App\Routing\Routes\BlacklistRoute;
 use App\Routing\Routes\DriverRoute;
+use App\Routing\Routes\ElasticsearchRoute;
 use App\Routing\Routes\RideRoute;
 use App\Routing\Routes\WelcomeRoute;
 use App\Routing\Routes\WhitelistRoute;
+use App\Routing\Routes\WebRoute;
 
 class RoutesRegistration
 {
@@ -18,12 +20,14 @@ class RoutesRegistration
 
     private array $routeClasses = [
         WelcomeRoute::class,
+        WebRoute::class,
         BlacklistRoute::class,
         WhitelistRoute::class,
         AuthRoute::class,
         DriverRoute::class,
         RideRoute::class,
         BillingRoute::class,
+        ElasticsearchRoute::class,
     ];
 
     public function __construct(Container $container)

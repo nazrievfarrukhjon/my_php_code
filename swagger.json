@@ -1,0 +1,682 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Elasticsearch API",
+        "description": "API for managing Elasticsearch indices and documents",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Development server"
+        }
+    ],
+    "paths": {
+        "/api/elasticsearch/indices/rides": {
+            "post": {
+                "tags": [
+                    "Elasticsearch Indices"
+                ],
+                "summary": "Create rides index",
+                "description": "Creates the rides index with proper mappings for geo-points and other fields",
+                "operationId": "2e474f5462e5d9f28c8f01bb38515af0",
+                "responses": {
+                    "200": {
+                        "description": "Index created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Rides index created successfully"
+                                        },
+                                        "index": {
+                                            "type": "string",
+                                            "example": "rides"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to create index"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Connection refused"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/elasticsearch/indices/{indexName}": {
+            "delete": {
+                "tags": [
+                    "Elasticsearch Indices"
+                ],
+                "summary": "Delete index",
+                "description": "Deletes the specified Elasticsearch index",
+                "operationId": "fae7b5a201d0851abd8ff522540c2e31",
+                "parameters": [
+                    {
+                        "name": "indexName",
+                        "in": "path",
+                        "description": "Name of the index to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "rides"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Index deleted successfully"
+                                        },
+                                        "index": {
+                                            "type": "string",
+                                            "example": "rides"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/elasticsearch/rides": {
+            "post": {
+                "tags": [
+                    "Ride Documents"
+                ],
+                "summary": "Index a ride document",
+                "description": "Indexes a single ride document into the rides index",
+                "operationId": "9916d503d0acb1fb50b8d7332bc67f60",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ride_id": {
+                                        "type": "string",
+                                        "example": "r1"
+                                    },
+                                    "driver_id": {
+                                        "type": "string",
+                                        "example": "d1"
+                                    },
+                                    "passenger_id": {
+                                        "type": "string",
+                                        "example": "p1"
+                                    },
+                                    "pickup_time": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-10-08T08:00:00Z"
+                                    },
+                                    "dropoff_time": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-10-08T08:20:00Z"
+                                    },
+                                    "pickup_loc": {
+                                        "properties": {
+                                            "lat": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 40.7128
+                                            },
+                                            "lon": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": -74.006
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "dropoff_loc": {
+                                        "properties": {
+                                            "lat": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 40.7306
+                                            },
+                                            "lon": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": -73.9352
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "distance_km": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 12.5
+                                    },
+                                    "fare_usd": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 15.5
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "completed"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Document indexed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ride document indexed successfully"
+                                        },
+                                        "ride_id": {
+                                            "type": "string",
+                                            "example": "r1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/elasticsearch/rides/bulk": {
+            "post": {
+                "tags": [
+                    "Ride Documents"
+                ],
+                "summary": "Bulk index ride documents",
+                "description": "Bulk indexes multiple ride documents into the rides index",
+                "operationId": "3d6dfafb98164b5627fe95e81f7bbd23",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "documents": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "ride_id": {
+                                                    "type": "string",
+                                                    "example": "r1"
+                                                },
+                                                "driver_id": {
+                                                    "type": "string",
+                                                    "example": "d1"
+                                                },
+                                                "passenger_id": {
+                                                    "type": "string",
+                                                    "example": "p1"
+                                                },
+                                                "pickup_time": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-10-08T08:00:00Z"
+                                                },
+                                                "dropoff_time": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-10-08T08:20:00Z"
+                                                },
+                                                "pickup_loc": {
+                                                    "properties": {
+                                                        "lat": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 40.7128
+                                                        },
+                                                        "lon": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": -74.006
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "dropoff_loc": {
+                                                    "properties": {
+                                                        "lat": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 40.7306
+                                                        },
+                                                        "lon": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": -73.9352
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "distance_km": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 12.5
+                                                },
+                                                "fare_usd": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 15.5
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "completed"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Documents indexed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bulk index completed successfully"
+                                        },
+                                        "documents_count": {
+                                            "type": "integer",
+                                            "example": 3
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/elasticsearch/rides/search": {
+            "get": {
+                "tags": [
+                    "Ride Documents"
+                ],
+                "summary": "Search rides",
+                "description": "Search for rides with various filters including geo-distance search",
+                "operationId": "1acb175dc533ecaa272d9e6e2758eb8c",
+                "parameters": [
+                    {
+                        "name": "driver_id",
+                        "in": "query",
+                        "description": "Filter by driver ID",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "d1"
+                        }
+                    },
+                    {
+                        "name": "passenger_id",
+                        "in": "query",
+                        "description": "Filter by passenger ID",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "p1"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by ride status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "completed"
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "description": "Filter by pickup date from (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2025-10-01"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "description": "Filter by pickup date to (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2025-10-31"
+                        }
+                    },
+                    {
+                        "name": "min_fare",
+                        "in": "query",
+                        "description": "Minimum fare filter",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "max_fare",
+                        "in": "query",
+                        "description": "Maximum fare filter",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 50
+                        }
+                    },
+                    {
+                        "name": "pickup_lat",
+                        "in": "query",
+                        "description": "Pickup location latitude for geo-distance search",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 40.7306
+                        }
+                    },
+                    {
+                        "name": "pickup_lon",
+                        "in": "query",
+                        "description": "Pickup location longitude for geo-distance search",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float",
+                            "example": -73.9352
+                        }
+                    },
+                    {
+                        "name": "distance_km",
+                        "in": "query",
+                        "description": "Distance in kilometers for geo-distance search",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 5
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Number of results to return",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search results",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 3
+                                        },
+                                        "took": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "example": "r1"
+                                                    },
+                                                    "score": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 1
+                                                    },
+                                                    "source": {
+                                                        "properties": {
+                                                            "ride_id": {
+                                                                "type": "string",
+                                                                "example": "r1"
+                                                            },
+                                                            "driver_id": {
+                                                                "type": "string",
+                                                                "example": "d1"
+                                                            },
+                                                            "passenger_id": {
+                                                                "type": "string",
+                                                                "example": "p1"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "completed"
+                                                            },
+                                                            "fare_usd": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 15.5
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/elasticsearch/indices/{indexName}/stats": {
+            "get": {
+                "tags": [
+                    "Elasticsearch Indices"
+                ],
+                "summary": "Get index statistics",
+                "description": "Get statistics for the specified Elasticsearch index",
+                "operationId": "db425233c0737cea2140107211dcf14a",
+                "parameters": [
+                    {
+                        "name": "indexName",
+                        "in": "path",
+                        "description": "Name of the index",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "rides"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "index": {
+                                            "type": "string",
+                                            "example": "rides"
+                                        },
+                                        "document_count": {
+                                            "type": "integer",
+                                            "example": 150
+                                        },
+                                        "size_in_bytes": {
+                                            "type": "integer",
+                                            "example": 1024000
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "active"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/docs": {
+            "get": {
+                "tags": [
+                    "Documentation"
+                ],
+                "summary": "Swagger UI",
+                "description": "Interactive API documentation interface",
+                "operationId": "34135cd193ee744175125dba5eaf17ed",
+                "responses": {
+                    "200": {
+                        "description": "Swagger UI HTML page",
+                        "content": {
+                            "text/html": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/docs.json": {
+            "get": {
+                "tags": [
+                    "Documentation"
+                ],
+                "summary": "OpenAPI Specification",
+                "description": "OpenAPI 3.0 specification in JSON format",
+                "operationId": "f84223cad2785642d852d5e85586e6a4",
+                "responses": {
+                    "200": {
+                        "description": "OpenAPI specification",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Elasticsearch Indices",
+            "description": "Elasticsearch Indices"
+        },
+        {
+            "name": "Ride Documents",
+            "description": "Ride Documents"
+        },
+        {
+            "name": "Documentation",
+            "description": "Documentation"
+        }
+    ]
+}

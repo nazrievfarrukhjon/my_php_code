@@ -9,19 +9,19 @@ class RideRoute extends ARoute
 {
     public function getRoutes(): array
     {
-        $this->add('POST', '/rides/request', RideController::class, 'requestRide', [], []);
+        $this->add('POST', '/api/rides/request', RideController::class, 'requestRide', [], []);
 
-        $this->add('POST', '/rides/status', RideController::class, 'getStatus', [], []);
+        $this->add('POST', '/api/rides/status', RideController::class, 'getStatus', [], []);
 
-        $this->add('POST', '/rides/pending', RideController::class, 'pending', [], []);
+        $this->add('POST', '/api/rides/pending', RideController::class, 'pending', [], []);
 
-        $this->add('POST', '/rides/accept', RideController::class, 'acceptRide', [], []);
+        $this->add('POST', '/api/rides/accept', RideController::class, 'acceptRide', [], []);
 
-        $this->add('POST', '/rides/start', RideController::class, 'startRide', [], []);
+        $this->add('POST', '/api/rides/start', RideController::class, 'startRide', [], []);
 
-        $this->add('POST', '/rides/complete', RideController::class, 'completeRide', [], []);
+        $this->add('POST', '/api/rides/complete', RideController::class, 'completeRide', [], []);
 
-        $this->add('POST', '/rides/nearby', RideController::class, 'nearby', [], []);
+        $this->add('POST', '/api/rides/nearby', RideController::class, 'nearby', [], []);
 
         return $this->routesContainer;
     }

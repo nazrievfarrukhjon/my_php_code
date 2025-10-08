@@ -10,9 +10,9 @@ class BillingRoute extends ARoute
 
     public function getRoutes(): array
     {
-        $this->add('POST', '/billing/charge', BillingController::class, 'charge', [], []);
+        $this->add('POST', '/api/billing/charge', BillingController::class, 'charge', [], []);
 
-        $this->add('POST', '/billing/invoices', BillingController::class, 'getStatus', [], []);
+        $this->add('POST', '/api/billing/invoices', BillingController::class, 'getStatus', [], []);
 
         return $this->routesContainer;
     }

@@ -12,6 +12,7 @@ use App\Controllers\AuthController;
 use App\Controllers\BillingController;
 use App\Controllers\BlacklistController;
 use App\Controllers\DriverController;
+use App\Controllers\ElasticsearchController;
 use App\Controllers\RideController;
 use App\Controllers\WelcomeController;
 use App\Controllers\WhitelistController;
@@ -30,20 +31,22 @@ use App\Repositories\RideRepository;
 use App\Repositories\WhitelistRepository;
 use JetBrains\PhpStorm\NoReturn;
 
-#[NoReturn]
-function dd(...$args): void
-{
-    foreach ($args as $index => $arg) {
-        echo "[$index] \n";
-        if (is_array($arg) || is_object($arg)) {
-            print_r($arg);
-        } else {
-            var_dump($arg);
+if (!function_exists('dd')) {
+    #[NoReturn]
+    function dd(...$args): void
+    {
+        foreach ($args as $index => $arg) {
+            echo "[$index] \n";
+            if (is_array($arg) || is_object($arg)) {
+                print_r($arg);
+            } else {
+                var_dump($arg);
+            }
+            echo "\n";
         }
-        echo "\n";
-    }
 
-    die(0);
+        die(0);
+    }
 }
 
 
@@ -190,6 +193,10 @@ $container->setFactory(BillingController::class, function($c) {
             $c->get('replica_db'),
         ),
     );
+});
+
+$container->setFactory(ElasticsearchController::class, function($c) {
+    return fn() => new ElasticsearchController();
 });
 
 return $container;

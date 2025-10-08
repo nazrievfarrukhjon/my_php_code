@@ -9,9 +9,9 @@ class AuthRoute extends ARoute
 {
     public function getRoutes(): array
     {
-        $this->add('POST', '/auth/login', AuthController::class, 'login', [], []);
+        $this->add('POST', '/api/auth/login', AuthController::class, 'login', [], []);
 
-        $this->add('POST', '/auth/register', AuthController::class, 'register', [], []);
+        $this->add('POST', '/api/auth/register', AuthController::class, 'register', [], []);
 
         return $this->routesContainer;
     }

@@ -12,27 +12,27 @@ class BlacklistRoute extends ARoute
 
     public function getRoutes(): array
     {
-        $this->add('GET', '/blacklist', BlacklistController::class, 'index', [], [
+        $this->add('GET', '/api/blacklist', BlacklistController::class, 'index', [], [
             LoggingMiddleware::class,
             AuthMiddleware::class,
         ]);
 
-        $this->add('POST', '/blacklist', BlacklistController::class, 'store', [], [
+        $this->add('POST', '/api/blacklist', BlacklistController::class, 'store', [], [
             LoggingMiddleware::class,
             //\App\Middlewares\AuthMiddleware::class, // example
         ]);
 
-        $this->add('PUT', '/blacklist', BlacklistController::class, 'update', ['int'], [
+        $this->add('PUT', '/api/blacklist', BlacklistController::class, 'update', ['int'], [
             LoggingMiddleware::class,
             //\App\Middlewares\AuthMiddleware::class,
         ]);
 
-        $this->add('DELETE', '/blacklist', BlacklistController::class, 'delete', ['int'], [
+        $this->add('DELETE', '/api/blacklist', BlacklistController::class, 'delete', ['int'], [
             LoggingMiddleware::class,
             //\App\Middlewares\AuthMiddleware::class,
         ]);
 
-        $this->add('POST', '/blacklist/search', BlacklistController::class, 'searchByName', [], [
+        $this->add('POST', '/api/blacklist/search', BlacklistController::class, 'searchByName', [], [
             LoggingMiddleware::class,
             AuthMiddleware::class,
         ]);
