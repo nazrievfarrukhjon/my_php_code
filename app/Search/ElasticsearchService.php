@@ -818,4 +818,134 @@ class ElasticsearchService
             return false;
         }
     }
+
+    public function listAllIndices(): array
+    {
+        try {
+            $response = $this->client->cat()->indices(['format' => 'json']);
+            
+            $indices = [];
+            foreach ($response as $index) {
+                $indices[] = [
+                    'name' => $index['index'],
+                    'health' => $index['health'],
+                    'status' => $index['status'],
+                    'docs_count' => (int) $index['docs.count'],
+                    'store_size' => $index['store.size']
+                ];
+            }
+            
+            return $indices;
+        } catch (Exception $e) {
+            $this->logger->error('Failed to list indices', ['error' => $e->getMessage()]);
+            return [];
+        }
+    }
+
+    public function createGeneralIndex(array $mapping = [], array $settings = []): bool
+    {
+        try {
+            $params = [
+                'index' => $this->index,
+                'body' => []
+            ];
+
+            if (!empty($settings)) {
+                $params['body']['settings'] = $settings;
+            }
+
+            if (!empty($mapping)) {
+                $params['body']['mappings'] = $mapping;
+            }
+
+            $this->client->indices()->create($params);
+            $this->logger->info('Index created successfully', ['index' => $this->index]);
+            return true;
+        } catch (Exception $e) {
+            $this->logger->error('Failed to create index', ['error' => $e->getMessage(), 'index' => $this->index]);
+            return false;
+        }
+    }
+
+    public function updateMapping(array $mapping): bool
+    {
+        try {
+            $params = [
+                'index' => $this->index,
+                'body' => [
+                    'properties' => $mapping
+                ]
+            ];
+
+            $this->client->indices()->putMapping($params);
+            $this->logger->info('Mapping updated successfully', ['index' => $this->index]);
+            return true;
+        } catch (Exception $e) {
+            $this->logger->error('Failed to update mapping', ['error' => $e->getMessage(), 'index' => $this->index]);
+            return false;
+        }
+    }
+
+    public function indexDocument(array $document, ?string $documentId = null): bool
+    {
+        try {
+            $params = [
+                'index' => $this->index,
+                'body' => $document
+            ];
+
+            if ($documentId !== null) {
+                $params['id'] = $documentId;
+            }
+
+            $this->client->index($params);
+            $this->logger->info('Document indexed successfully', ['index' => $this->index, 'document_id' => $documentId]);
+            return true;
+        } catch (Exception $e) {
+            $this->logger->error('Failed to index document', ['error' => $e->getMessage(), 'index' => $this->index, 'document_id' => $documentId]);
+            return false;
+        }
+    }
+
+    public function search(array $query, int $size = 10, int $from = 0): array
+    {
+        try {
+            $params = [
+                'index' => $this->index,
+                'body' => [
+                    'query' => $query,
+                    'size' => $size,
+                    'from' => $from
+                ]
+            ];
+
+            $response = $this->client->search($params);
+            
+            return [
+                'total' => $response['hits']['total']['value'] ?? 0,
+                'took' => $response['took'] ?? 0,
+                'hits' => $response['hits']['hits'] ?? []
+            ];
+        } catch (Exception $e) {
+            $this->logger->error('Failed to search documents', ['error' => $e->getMessage(), 'index' => $this->index]);
+            return ['total' => 0, 'took' => 0, 'hits' => []];
+        }
+    }
+
+    public function deleteDocument(string $documentId): bool
+    {
+        try {
+            $params = [
+                'index' => $this->index,
+                'id' => $documentId
+            ];
+
+            $this->client->delete($params);
+            $this->logger->info('Document deleted successfully', ['index' => $this->index, 'document_id' => $documentId]);
+            return true;
+        } catch (Exception $e) {
+            $this->logger->error('Failed to delete document', ['error' => $e->getMessage(), 'index' => $this->index, 'document_id' => $documentId]);
+            return false;
+        }
+    }
 }

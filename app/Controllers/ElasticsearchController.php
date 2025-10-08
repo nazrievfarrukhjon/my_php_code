@@ -180,34 +180,6 @@ class ElasticsearchController implements ControllerInterface
         }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/elasticsearch/indices/{indexName}",
-     *     summary="Delete index",
-     *     description="Deletes the specified Elasticsearch index",
-     *     tags={"Elasticsearch Indices"},
-     *     @OA\Parameter(
-     *         name="indexName",
-     *         in="path",
-     *         required=true,
-     *         description="Name of the index to delete",
-     *         @OA\Schema(type="string", example="rides")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Index deleted successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Index deleted successfully"),
-     *             @OA\Property(property="index", type="string", example="rides")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal server error"
-     *     )
-     * )
-     */
     public function deleteIndex($request): array
     {
         try {
@@ -590,36 +562,6 @@ class ElasticsearchController implements ControllerInterface
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/elasticsearch/indices/{indexName}/stats",
-     *     summary="Get index statistics",
-     *     description="Get statistics for the specified Elasticsearch index",
-     *     tags={"Elasticsearch Indices"},
-     *     @OA\Parameter(
-     *         name="indexName",
-     *         in="path",
-     *         required=true,
-     *         description="Name of the index",
-     *         @OA\Schema(type="string", example="rides")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Index statistics",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="index", type="string", example="rides"),
-     *             @OA\Property(property="document_count", type="integer", example=150),
-     *             @OA\Property(property="size_in_bytes", type="integer", example=1024000),
-     *             @OA\Property(property="status", type="string", example="active")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal server error"
-     *     )
-     * )
-     */
     public function getIndexStats($request): array
     {
         try {
@@ -657,19 +599,6 @@ class ElasticsearchController implements ControllerInterface
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/docs",
-     *     summary="Swagger UI",
-     *     description="Interactive API documentation interface",
-     *     tags={"Documentation"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Swagger UI HTML page",
-     *         @OA\MediaType(mediaType="text/html")
-     *     )
-     * )
-     */
     public function getSwaggerUI($request): array
     {
         $html = '<!DOCTYPE html>
@@ -731,19 +660,6 @@ class ElasticsearchController implements ControllerInterface
         ];
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/docs.json",
-     *     summary="OpenAPI Specification",
-     *     description="OpenAPI 3.0 specification in JSON format",
-     *     tags={"Documentation"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="OpenAPI specification",
-     *         @OA\JsonContent()
-     *     )
-     * )
-     */
     public function getOpenApiSpec($request): array
     {
         $openapi = \OpenApi\Generator::scan([__DIR__ . '/ElasticsearchController.php']);

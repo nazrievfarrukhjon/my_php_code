@@ -9,6 +9,7 @@ use App\Routing\Routes\BillingRoute;
 use App\Routing\Routes\BlacklistRoute;
 use App\Routing\Routes\DriverRoute;
 use App\Routing\Routes\ElasticsearchRoute;
+use App\Routing\Routes\GeneralElasticsearchRoute;
 use App\Routing\Routes\RideRoute;
 use App\Routing\Routes\WelcomeRoute;
 use App\Routing\Routes\WhitelistRoute;
@@ -28,6 +29,7 @@ class RoutesRegistration
         RideRoute::class,
         BillingRoute::class,
         ElasticsearchRoute::class,
+        GeneralElasticsearchRoute::class,
     ];
 
     public function __construct(Container $container)

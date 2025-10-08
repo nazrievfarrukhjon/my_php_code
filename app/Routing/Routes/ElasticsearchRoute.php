@@ -25,9 +25,6 @@ class ElasticsearchRoute extends ARoute
         $this->add('POST', '/api/elasticsearch/rides/bulk', ElasticsearchController::class, 'bulkIndexRides', [], []);
         $this->add('GET', '/api/elasticsearch/rides/search', ElasticsearchController::class, 'searchRides', [], []);
 
-        // OpenAPI JSON spec (API endpoint)
-        $this->add('GET', '/api/docs.json', ElasticsearchController::class, 'getOpenApiSpec', [], []);
-
         return $this->routesContainer;
     }
 }

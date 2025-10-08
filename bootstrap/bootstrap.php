@@ -13,7 +13,9 @@ use App\Controllers\BillingController;
 use App\Controllers\BlacklistController;
 use App\Controllers\DriverController;
 use App\Controllers\ElasticsearchController;
+use App\Controllers\GeneralElasticsearchController;
 use App\Controllers\RideController;
+use App\Controllers\SwaggerController;
 use App\Controllers\WelcomeController;
 use App\Controllers\WhitelistController;
 use App\DB\DBFactories\MysqlFactory;
@@ -197,6 +199,14 @@ $container->setFactory(BillingController::class, function($c) {
 
 $container->setFactory(ElasticsearchController::class, function($c) {
     return fn() => new ElasticsearchController();
+});
+
+$container->setFactory(GeneralElasticsearchController::class, function($c) {
+    return fn() => new GeneralElasticsearchController();
+});
+
+$container->setFactory(SwaggerController::class, function($c) {
+    return fn() => new SwaggerController();
 });
 
 return $container;

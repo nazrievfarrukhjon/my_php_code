@@ -22,7 +22,8 @@ readonly class RequestParser
     {
         if ($this->contentType === "application/json") {
             if ($this->bodyContents['file_get_contents']) {
-                return json_decode($this->bodyContents['file_get_contents'], true);
+                $decoded = json_decode($this->bodyContents['file_get_contents'], true);
+                return $decoded ?? [];
             }
 
             return [];
